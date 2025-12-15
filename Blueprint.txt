@@ -1,6 +1,6 @@
-Prototype-7 (LifeRPG Technical Plan)
+Prototype-7 (ReLife RPG)
 This document contains technology recommendations, database structure, and AI integration logic for
-the LifeRPG application.
+the ReLife RPG application.
 
 1. Tech Stack Recommendations
 Here is a combination of modern technologies that offer fast performance and a great developer
