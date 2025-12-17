@@ -1,7 +1,6 @@
-
 import { useState } from 'react';
 import HexagonChart from '../components/HexagonChart';
-import { geminiClient } from '../lib/gemini';
+import { analyzeAction } from '../lib/gemini';
 
 // Dummy data for the chart
 const initialData = [
@@ -16,22 +15,19 @@ const initialData = [
 export default function Dashboard() {
     const [data] = useState(initialData);
     const [prompt, setPrompt] = useState('');
-    const [geminiResponse, setGeminiResponse] = useState('');
+    const [geminiResponse, setGeminiResponse] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
 
     const handleGenerate = async () => {
         if (!prompt) return;
         setLoading(true);
+        setGeminiResponse(null);
         try {
-            // In Phase 3 we will force JSON, for now just text
-            const result = await geminiClient.models.generateContent({
-                model: "gemini-2.5-flash",
-                contents: prompt,
-            });
-            setGeminiResponse(result.text || '');
+            const result = await analyzeAction(prompt);
+            setGeminiResponse(JSON.stringify(result, null, 2));
         } catch (error) {
             console.error(error);
-            setGeminiResponse("Error calling Gemini");
+            setGeminiResponse("Error calling Gemini or parsing response.");
         } finally {
             setLoading(false);
         }
@@ -76,7 +72,7 @@ export default function Dashboard() {
                     {geminiResponse && (
                         <div className="mt-4 p-4 bg-gray-700 rounded border border-gray-600">
                             <h3 className="font-bold mb-2 text-purple-300">AI Analysis:</h3>
-                            <p className="text-sm whitespace-pre-wrap">{geminiResponse}</p>
+                            <pre className="text-sm whitespace-pre-wrap overflow-auto">{geminiResponse}</pre>
                         </div>
                     )}
                 </div>
