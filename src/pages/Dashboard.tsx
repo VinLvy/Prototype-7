@@ -1,30 +1,82 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import HexagonChart from '../components/HexagonChart';
 import { analyzeAction } from '../lib/gemini';
+import { saveActivityLog, updateUserStats, getUserStats, type UserStats } from '../lib/db';
+import supabase from '../lib/supabase';
 
-// Dummy data for the chart
-const initialData = [
-    { subject: 'STR', A: 40, fullMark: 100 },
-    { subject: 'INT', A: 60, fullMark: 100 },
-    { subject: 'CHA', A: 30, fullMark: 100 },
-    { subject: 'CRE', A: 70, fullMark: 100 },
-    { subject: 'WIS', A: 50, fullMark: 100 },
-    { subject: 'WEA', A: 20, fullMark: 100 },
-];
+// Helper to format DB stats for the chart
+const formatStatsForChart = (stats: UserStats | null) => {
+    // Default values if stats are missing
+    const s = stats || {
+        strength: 10,
+        intelligence: 10,
+        charisma: 10,
+        creativity: 10,
+        wisdom: 10,
+        wealth: 10
+    };
+
+    return [
+        { subject: 'STR', A: s.strength, fullMark: 100 },
+        { subject: 'INT', A: s.intelligence, fullMark: 100 },
+        { subject: 'CHA', A: s.charisma, fullMark: 100 },
+        { subject: 'CRE', A: s.creativity, fullMark: 100 },
+        { subject: 'WIS', A: s.wisdom, fullMark: 100 },
+        { subject: 'WEA', A: s.wealth, fullMark: 100 },
+    ];
+};
 
 export default function Dashboard() {
-    const [data] = useState(initialData);
+    const [data, setData] = useState(formatStatsForChart(null));
     const [prompt, setPrompt] = useState('');
     const [geminiResponse, setGeminiResponse] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
+    const [userId, setUserId] = useState<string | null>(null);
+
+    // Fetch initial stats and user ID
+    useEffect(() => {
+        const fetchUserData = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+                setUserId(user.id);
+                const stats = await getUserStats(user.id);
+                if (stats) {
+                    setData(formatStatsForChart(stats));
+                }
+            }
+        };
+
+        fetchUserData();
+    }, []);
 
     const handleGenerate = async () => {
         if (!prompt) return;
+        if (!userId) {
+            alert("You must be logged in to save progress.");
+            return;
+        }
+
         setLoading(true);
         setGeminiResponse(null);
         try {
+            // 1. Analyze with AI
             const result = await analyzeAction(prompt);
             setGeminiResponse(JSON.stringify(result, null, 2));
+
+            // 2. Save Log to DB
+            await saveActivityLog(userId, prompt, result);
+
+            // 3. Update User Stats in DB
+            await updateUserStats(userId, result.stats_increase);
+
+            // 4. Update Local State (Refetch or Calculate locally)
+            // For simplicity and accuracy, let's just refetch or optimistically update.
+            // Let's refetch to be sure we match DB state.
+            const updatedStats = await getUserStats(userId);
+            if (updatedStats) {
+                setData(formatStatsForChart(updatedStats));
+            }
+
         } catch (error) {
             console.error(error);
             setGeminiResponse("Error calling Gemini or parsing response.");
