@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import HexagonChart from '../components/HexagonChart';
+import LevelUpCelebration from '../components/LevelUpCelebration';
 import { analyzeAction } from '../lib/gemini';
-import { saveActivityLog, updateUserStats, getUserStats, type UserStats } from '../lib/db';
+import { saveActivityLog, updateUserStats, getUserStats, updateUserXP, getUserProfile, type UserStats } from '../lib/db';
+import { playLevelUpSound } from '../lib/audio';
 import supabase from '../lib/supabase';
 
 // Helper to format DB stats for the chart
@@ -33,15 +35,29 @@ export default function Dashboard() {
     const [loading, setLoading] = useState(false);
     const [userId, setUserId] = useState<string | null>(null);
 
+    // Gamification State
+    const [level, setLevel] = useState(1);
+    const [currentExp, setCurrentExp] = useState(0);
+    const [showCelebration, setShowCelebration] = useState(false);
+
     // Fetch initial stats and user ID
     useEffect(() => {
         const fetchUserData = async () => {
             const { data: { user } } = await supabase.auth.getUser();
             if (user) {
                 setUserId(user.id);
+
+                // Fetch Stats
                 const stats = await getUserStats(user.id);
                 if (stats) {
                     setData(formatStatsForChart(stats));
+                }
+
+                // Fetch Profile (Level/XP)
+                const profile = await getUserProfile(user.id);
+                if (profile) {
+                    setLevel(profile.level);
+                    setCurrentExp(profile.current_exp);
                 }
             }
         };
@@ -69,9 +85,19 @@ export default function Dashboard() {
             // 3. Update User Stats in DB
             await updateUserStats(userId, result.stats_increase);
 
-            // 4. Update Local State (Refetch or Calculate locally)
-            // For simplicity and accuracy, let's just refetch or optimistically update.
-            // Let's refetch to be sure we match DB state.
+            // 4. Update XP & Level
+            // Give 10 XP per interaction (fixed for now)
+            const xpResult = await updateUserXP(userId, 10);
+
+            setLevel(xpResult.newLevel);
+            setCurrentExp(xpResult.currentExp);
+
+            if (xpResult.levelUp) {
+                setShowCelebration(true);
+                playLevelUpSound();
+            }
+
+            // 5. Update Chart Data
             const updatedStats = await getUserStats(userId);
             if (updatedStats) {
                 setData(formatStatsForChart(updatedStats));
@@ -85,14 +111,26 @@ export default function Dashboard() {
         }
     };
 
+    // Calculate progress percentage
+    const xpNeeded = level * 100;
+    const progressPercent = Math.min(100, Math.max(0, (currentExp / xpNeeded) * 100));
+
     return (
-        <div className="min-h-screen bg-gray-900 text-white p-8">
+        <div className="min-h-screen bg-gray-900 text-white p-4 md:p-8 relative">
+            <LevelUpCelebration show={showCelebration} onClose={() => setShowCelebration(false)} />
+
             <header className="mb-8 flex justify-between items-center">
-                <h1 className="text-3xl font-bold text-purple-400">ReLife RPG Dashboard</h1>
+                <h1 className="text-2xl md:text-3xl font-bold text-purple-400">ReLife RPG Dashboard</h1>
                 <div className="text-right">
-                    <p className="text-sm text-gray-400">Level 1</p>
-                    <div className="w-32 h-2 bg-gray-700 rounded-full mt-1">
-                        <div className="bg-green-500 h-2 rounded-full" style={{ width: '20%' }}></div>
+                    <p className="text-sm text-gray-400 font-bold mb-1">Level {level}</p>
+                    <div className="w-48 h-4 bg-gray-700 rounded-full overflow-hidden border border-gray-600 relative group">
+                        <div
+                            className="bg-gradient-to-r from-green-400 to-green-600 h-full transition-all duration-500 ease-out"
+                            style={{ width: `${progressPercent}%` }}
+                        ></div>
+                        <p className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-white drop-shadow-md">
+                            {currentExp} / {xpNeeded} XP
+                        </p>
                     </div>
                 </div>
             </header>
@@ -132,3 +170,4 @@ export default function Dashboard() {
         </div>
     );
 }
+
