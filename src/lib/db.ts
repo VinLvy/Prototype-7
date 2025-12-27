@@ -41,6 +41,20 @@ export const getUserStats = async (userId: string): Promise<UserStats | null> =>
     return data;
 };
 
+export const getUserProfile = async (userId: string) => {
+    const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', userId)
+        .single();
+
+    if (error) {
+        console.error('Error fetching user profile:', error);
+        return null;
+    }
+    return data;
+};
+
 export const updateUserStats = async (userId: string, statsIncrease: { [key: string]: number }) => {
     // 1. Get current stats
     const currentStats = await getUserStats(userId);
@@ -85,4 +99,46 @@ export const updateUserStats = async (userId: string, statsIncrease: { [key: str
     }
 
     return newStats;
+};
+
+// Returns { levelUp: boolean, newLevel: number, currentExp: number }
+export const updateUserXP = async (userId: string, xpGained: number) => {
+    // 1. Get current User data (level, current_exp)
+    const { data: user, error } = await supabase
+        .from('users')
+        .select('level, current_exp')
+        .eq('id', userId)
+        .single();
+
+    if (error || !user) {
+        console.error('Error fetching user for XP update:', error);
+        return { levelUp: false, newLevel: 1, currentExp: 0 };
+    }
+
+    let { level, current_exp } = user;
+    current_exp += xpGained;
+
+    // Simple Level Up Formula: 100 XP per level
+    // e.g. Level 1 -> Level 2 requires 100 XP.
+    // If you have 120 XP, you become Level 2 with 20 XP.
+    const xpNeeded = level * 100;
+    let levelUp = false;
+
+    if (current_exp >= xpNeeded) {
+        level += 1;
+        current_exp -= xpNeeded; // Carry over excess XP
+        levelUp = true;
+    }
+
+    // 2. Update DB
+    const { error: updateError } = await supabase
+        .from('users')
+        .update({ level, current_exp })
+        .eq('id', userId);
+
+    if (updateError) {
+        console.error('Error updating user XP:', updateError);
+    }
+
+    return { levelUp, newLevel: level, currentExp: current_exp };
 };
