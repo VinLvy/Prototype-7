@@ -19,7 +19,7 @@ interface HexagonChartProps {
 
 const HexagonChart: React.FC<HexagonChartProps> = ({ data }) => {
     return (
-        <div style={{ width: '100%', height: 300, position: 'relative' }}>
+        <div style={{ width: '100%', height: 500, position: 'relative' }}>
             <ResponsiveContainer width="100%" height="100%">
                 <RadarChart cx="50%" cy="50%" outerRadius="70%" data={data}>
                     <defs>
