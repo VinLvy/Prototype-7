@@ -86,8 +86,7 @@ export default function Dashboard() {
             await updateUserStats(userId, result.stats_increase);
 
             // 4. Update XP & Level
-            // Give 10 XP per interaction (fixed for now)
-            const xpResult = await updateUserXP(userId, 10);
+            const xpResult = await updateUserXP(userId, result.xp_gained);
 
             setLevel(xpResult.newLevel);
             setCurrentExp(xpResult.currentExp);
