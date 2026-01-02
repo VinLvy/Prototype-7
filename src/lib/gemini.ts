@@ -23,10 +23,12 @@ export const analyzeAction = async (userStory: string): Promise<AIAnalysisRespon
     const systemPrompt = `
 You are an RPG Game Master. The user will share their achievements or activities for the day. Your task is to analyze the story and award experience points (XP) to the following 6 attributes: STR (Physical), INT (Intelligence), CHA (Social), CRE (Creativity), WIS (Wisdom), WEA (Wealth).
 
+The sum of all stat increases must NOT exceed 10 points total. Distribute them based on relevance.
+
 Provide the response ONLY in JSON format: { "summary": "Short RPG-style summary (example: 'You successfully conquered the coding bug!')", "stats_increase": { "STR": 0, "INT": 0, "CHA": 0, "CRE": 0, "WIS": 0, "WEA": 0 }, "xp_gained": 0 }
 `;
 
-    const fullPrompt = `${systemPrompt}\n\nUser Input: "${userStory}"`;
+    const fullPrompt = `${systemPrompt} \n\nUser Input: "${userStory}"`;
 
     const response = await geminiClient.models.generateContent({
       model: "gemini-2.5-flash",
