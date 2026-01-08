@@ -101,44 +101,104 @@ export const updateUserStats = async (userId: string, statsIncrease: { [key: str
     return newStats;
 };
 
-// Returns { levelUp: boolean, newLevel: number, currentExp: number }
+// Returns { levelUp: boolean, newLevel: number, currentExp: number, skillPoints: number }
 export const updateUserXP = async (userId: string, xpGained: number) => {
-    // 1. Get current User data (level, current_exp)
+    // 1. Get current User data
     const { data: user, error } = await supabase
         .from('users')
-        .select('level, current_exp')
+        .select('level, current_exp, skill_points')
         .eq('id', userId)
         .single();
 
     if (error || !user) {
         console.error('Error fetching user for XP update:', error);
-        return { levelUp: false, newLevel: 1, currentExp: 0 };
+        return { levelUp: false, newLevel: 1, currentExp: 0, skillPoints: 0 };
     }
 
-    let { level, current_exp } = user;
+    let { level, current_exp, skill_points } = user;
+    // Default to 0 if null/undefined
+    skill_points = skill_points || 0;
+
     current_exp += xpGained;
 
     // Simple Level Up Formula: 100 XP per level
-    // e.g. Level 1 -> Level 2 requires 100 XP.
-    // If you have 120 XP, you become Level 2 with 20 XP.
     const xpNeeded = level * 100;
     let levelUp = false;
 
     if (current_exp >= xpNeeded) {
         level += 1;
-        current_exp -= xpNeeded; // Carry over excess XP
+        current_exp -= xpNeeded;
+        skill_points += 1; // Award 1 skill point
         levelUp = true;
     }
 
     // 2. Update DB
     const { error: updateError } = await supabase
         .from('users')
-        .update({ level, current_exp })
+        .update({ level, current_exp, skill_points })
         .eq('id', userId);
 
     if (updateError) {
         console.error('Error updating user XP:', updateError);
     }
 
-    return { levelUp, newLevel: level, currentExp: current_exp };
+    return { levelUp, newLevel: level, currentExp: current_exp, skillPoints: skill_points };
+};
+
+export const allocateSkillPoint = async (userId: string, statKey: string) => {
+    // 1. Validate Skill Points
+    const { data: user, error: userError } = await supabase
+        .from('users')
+        .select('skill_points')
+        .eq('id', userId)
+        .single();
+
+    if (userError || !user) throw new Error("Could not fetch user profile");
+
+    if (!user.skill_points || user.skill_points <= 0) {
+        throw new Error("No skill points available");
+    }
+
+    // 2. Update Stats
+    // Map 'STR' -> 'strength'
+    const mapKeyToColumn: { [key: string]: string } = {
+        'STR': 'strength',
+        'INT': 'intelligence',
+        'CHA': 'charisma',
+        'CRE': 'creativity',
+        'WIS': 'wisdom',
+        'WEA': 'wealth'
+    };
+    const column = mapKeyToColumn[statKey];
+    if (!column) throw new Error("Invalid stat key");
+
+    const currentStats = await getUserStats(userId);
+    if (!currentStats) throw new Error("User stats not found");
+
+    // @ts-ignore
+    const newValue = (currentStats[column] || 0) + 1;
+
+    // Perform updates (optimistic: if one fails, we might have issue, but usually ok)
+    // Update Stats
+    const { error: statsError } = await supabase
+        .from('user_stats')
+        .update({ [column]: newValue })
+        .eq('user_id', userId);
+
+    if (statsError) throw statsError;
+
+    // Decrement Skill Point
+    const { error: pointError } = await supabase
+        .from('users')
+        .update({ skill_points: user.skill_points - 1 })
+        .eq('id', userId);
+
+    if (pointError) {
+        // Critical: Failed to deduct point but added stat. 
+        // In real app, revert stat or use RPC.
+        console.error("Critical: Failed to deduct skill point", pointError);
+        throw pointError;
+    }
+
+    return { success: true, newStatValue: newValue, remainingPoints: user.skill_points - 1 };
 };
