@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import HexagonChart from '../components/HexagonChart';
 import LevelUpCelebration from '../components/LevelUpCelebration';
 import { analyzeAction } from '../lib/gemini';
-import { saveActivityLog, updateUserStats, getUserStats, updateUserXP, getUserProfile, type UserStats } from '../lib/db';
+import { saveActivityLog, updateUserStats, getUserStats, updateUserXP, getUserProfile, allocateSkillPoint, type UserStats } from '../lib/db';
 import { playLevelUpSound } from '../lib/audio';
 import supabase from '../lib/supabase';
 
@@ -38,6 +38,7 @@ export default function Dashboard() {
     // Gamification State
     const [level, setLevel] = useState(1);
     const [currentExp, setCurrentExp] = useState(0);
+    const [skillPoints, setSkillPoints] = useState(0);
     const [showCelebration, setShowCelebration] = useState(false);
 
     // Fetch initial stats and user ID
@@ -58,6 +59,7 @@ export default function Dashboard() {
                 if (profile) {
                     setLevel(profile.level);
                     setCurrentExp(profile.current_exp);
+                    setSkillPoints(profile.skill_points || 0);
                 }
             }
         };
@@ -91,6 +93,8 @@ export default function Dashboard() {
             setLevel(xpResult.newLevel);
             setCurrentExp(xpResult.currentExp);
 
+            setSkillPoints(xpResult.skillPoints);
+
             if (xpResult.levelUp) {
                 setShowCelebration(true);
                 playLevelUpSound();
@@ -110,6 +114,22 @@ export default function Dashboard() {
         }
     };
 
+    const handleIncreaseStat = async (statKey: string) => {
+        if (!userId || skillPoints <= 0) return;
+
+        try {
+            const result = await allocateSkillPoint(userId, statKey);
+            if (result.success) {
+                setSkillPoints(result.remainingPoints);
+                const updatedStats = await getUserStats(userId);
+                setData(formatStatsForChart(updatedStats));
+            }
+        } catch (error) {
+            console.error("Allocation failed", error);
+            alert("Failed to allocate point.");
+        }
+    };
+
     // Calculate progress percentage
     const xpNeeded = level * 100;
     const progressPercent = Math.min(100, Math.max(0, (currentExp / xpNeeded) * 100));
@@ -122,6 +142,7 @@ export default function Dashboard() {
                 <h1 className="text-2xl md:text-3xl font-bold text-purple-400">ReLife RPG Dashboard</h1>
                 <div className="text-right">
                     <p className="text-sm text-gray-400 font-bold mb-1">Level {level}</p>
+                    {skillPoints > 0 && <p className="text-xs text-yellow-400 font-bold mb-1 animate-pulse">Skill Points: {skillPoints}</p>}
                     <div className="w-48 h-4 bg-gray-700 rounded-full overflow-hidden border border-gray-600 relative group">
                         <div
                             className="bg-gradient-to-r from-green-400 to-green-600 h-full transition-all duration-500 ease-out"
@@ -138,7 +159,11 @@ export default function Dashboard() {
                 {/* Stats Section */}
                 <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
                     <h2 className="text-xl font-semibold mb-4">Current Stats</h2>
-                    <HexagonChart data={data} />
+                    <HexagonChart
+                        data={data}
+                        skillPoints={skillPoints}
+                        onIncreaseStat={handleIncreaseStat}
+                    />
                 </div>
 
                 {/* Journal / AI Section */}
