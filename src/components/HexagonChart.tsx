@@ -14,9 +14,49 @@ interface HexagonChartProps {
         A: number;
         fullMark: number;
     }[];
+    skillPoints?: number;
+    onIncreaseStat?: (stat: string) => void;
 }
 
-const HexagonChart: React.FC<HexagonChartProps> = ({ data }) => {
+const CustomTick = ({ payload, x, y, skillPoints, onIncreaseStat }: any) => {
+    return (
+        <g transform={`translate(${x},${y})`}>
+            <text
+                x={0}
+                y={0}
+                dy={4}
+                textAnchor="middle"
+                fill="#22d3ee"
+                fontSize={12}
+                fontWeight="bold"
+            >
+                {payload.value}
+            </text>
+            {skillPoints && skillPoints > 0 && onIncreaseStat && (
+                <g
+                    onClick={() => onIncreaseStat(payload.value)}
+                    style={{ cursor: 'pointer' }}
+                    transform="translate(0, -15)"
+                >
+                    <circle r={8} fill="#10b981" stroke="#fff" strokeWidth={1} />
+                    <text
+                        x={0}
+                        y={0}
+                        dy={3}
+                        textAnchor="middle"
+                        fill="#fff"
+                        fontSize={12}
+                        fontWeight="bold"
+                    >
+                        +
+                    </text>
+                </g>
+            )}
+        </g>
+    );
+};
+
+const HexagonChart: React.FC<HexagonChartProps> = ({ data, skillPoints = 0, onIncreaseStat }) => {
     return (
         <div style={{ width: '100%', height: 500, position: 'relative' }}>
             <ResponsiveContainer width="100%" height="100%">
@@ -37,7 +77,13 @@ const HexagonChart: React.FC<HexagonChartProps> = ({ data }) => {
                     <PolarGrid stroke="#374151" strokeDasharray="3 3" />
                     <PolarAngleAxis
                         dataKey="subject"
-                        tick={{ fill: '#22d3ee', fontSize: 12, fontWeight: 'bold' }}
+                        tick={(props) => (
+                            <CustomTick
+                                {...props}
+                                skillPoints={skillPoints}
+                                onIncreaseStat={onIncreaseStat}
+                            />
+                        )}
                     />
                     <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
                     <Radar

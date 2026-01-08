@@ -91,4 +91,4 @@ Example: User's Social stats are low. Today's Quest: "Greet a neighbor or an old
 2. Phase 2 (Auth & UI): Create Login page & Dashboard with Radar Chart (Dummy Data).
 3. Phase 3 (AI Integration): Create function to send text to Gemini API and parse JSON response.
 4. Phase 4 (Database Sync): Save Gemini response results to Supabase user_stats table.
-5. Phase 5 (Polishing): Add particle animations, level up sound effects, and mobile responsiveness
+5. Phase 5 (Polishing): Add particle animations, level up sound effects, and mobile responsiveness.
