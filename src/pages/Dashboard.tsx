@@ -135,7 +135,7 @@ export default function Dashboard() {
     const progressPercent = Math.min(100, Math.max(0, (currentExp / xpNeeded) * 100));
 
     return (
-        <div className="min-h-screen bg-gray-900 text-white p-4 md:p-8 relative">
+        <div className="text-white p-4 md:p-8 relative">
             <LevelUpCelebration show={showCelebration} onClose={() => setShowCelebration(false)} />
 
             <header className="mb-8 flex justify-between items-center">
