@@ -202,3 +202,17 @@ export const allocateSkillPoint = async (userId: string, statKey: string) => {
 
     return { success: true, newStatValue: newValue, remainingPoints: user.skill_points - 1 };
 };
+
+export const getActivityLogs = async (userId: string) => {
+    const { data, error } = await supabase
+        .from('activity_logs')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error('Error fetching activity logs:', error);
+        return [];
+    }
+    return data;
+};
