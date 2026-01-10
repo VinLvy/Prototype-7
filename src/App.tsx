@@ -2,6 +2,9 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import Dashboard from './pages/Dashboard';
+import History from './pages/History';
+import Settings from './pages/Settings';
+import Layout from './components/Layout';
 import './App.css';
 
 function App() {
@@ -10,7 +13,17 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+
+        {/* Helper to redirect users who try to access root */}
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+
+        {/* Protected Routes wrapped in Layout (Sidebar) */}
+        <Route element={<Layout />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/history" element={<History />} />
+          <Route path="/settings" element={<Settings />} />
+        </Route>
+
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </Router>
