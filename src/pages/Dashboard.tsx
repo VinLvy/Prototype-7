@@ -106,6 +106,9 @@ export default function Dashboard() {
                 setData(formatStatsForChart(updatedStats));
             }
 
+            // Clear the prompt
+            setPrompt('');
+
         } catch (error) {
             console.error(error);
             setGeminiResponse("Error calling Gemini or parsing response.");
