@@ -83,7 +83,7 @@ export const updateUserStats = async (userId: string, statsIncrease: { [key: str
         const column = mapKeyToColumn[key];
         if (column) {
             // @ts-ignore
-            newStats[column] = (currentStats[column] || 0) + (increase || 0);
+            newStats[column] = Math.max(0, (currentStats[column] || 0) + (increase || 0));
         }
     }
 
@@ -120,6 +120,7 @@ export const updateUserXP = async (userId: string, xpGained: number) => {
     skill_points = skill_points || 0;
 
     current_exp += xpGained;
+    if (current_exp < 0) current_exp = 0;
 
     // Simple Level Up Formula: 100 XP per level
     const xpNeeded = level * 100;
