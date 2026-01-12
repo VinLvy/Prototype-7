@@ -1,5 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import supabase from '../lib/supabase';
+import { LayoutDashboard, History, Settings, LogOut, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface SidebarProps {
     isOpen: boolean;
@@ -15,9 +16,9 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
     };
 
     const navItems = [
-        { name: 'Dashboard', path: '/dashboard', icon: '📊' },
-        { name: 'History', path: '/history', icon: '📜' },
-        { name: 'Settings', path: '/settings', icon: '⚙️' },
+        { name: 'Dashboard', path: '/dashboard', icon: <LayoutDashboard size={24} /> },
+        { name: 'History', path: '/history', icon: <History size={24} /> },
+        { name: 'Settings', path: '/settings', icon: <Settings size={24} /> },
     ];
 
     return (
@@ -33,7 +34,7 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
                     className="p-2 rounded hover:bg-gray-700 focus:outline-none text-gray-300"
                     title={isOpen ? "Collapse" : "Expand"}
                 >
-                    {isOpen ? '◀' : '▶'}
+                    {isOpen ? <ChevronLeft size={24} /> : <ChevronRight size={24} />}
                 </button>
             </div>
 
@@ -51,7 +52,7 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
                                     }`
                                 }
                             >
-                                <div className="flex items-center justify-center min-w-[2rem] text-xl">
+                                <div className="flex items-center justify-center min-w-[2rem]">
                                     {item.icon}
                                 </div>
 
@@ -73,8 +74,8 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
                     onClick={handleLogout}
                     className="flex items-center w-full px-4 py-2 text-red-400 hover:bg-gray-700 hover:text-red-300 rounded-lg transition-colors"
                 >
-                    <div className="flex items-center justify-center min-w-[2rem] text-xl">
-                        🚪
+                    <div className="flex items-center justify-center min-w-[2rem]">
+                        <LogOut size={24} />
                     </div>
                     <span
                         className={`ml-3 whitespace-nowrap transition-all duration-300 overflow-hidden ${isOpen ? 'opacity-100 max-w-full' : 'opacity-0 max-w-0'
