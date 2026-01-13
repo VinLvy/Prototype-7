@@ -18,17 +18,31 @@ interface HexagonChartProps {
     onIncreaseStat?: (stat: string) => void;
 }
 
-const CustomTick = ({ payload, x, y, skillPoints, onIncreaseStat }: any) => {
+const CustomTick = ({ payload, x, y, cx, cy, skillPoints, onIncreaseStat }: any) => {
+    // Calculate vector from center to current point
+    // We can use simple vector math: (x - cx, y - cy)
+    // But since x,y are already calculated, let's just push them out further.
+    // Distance from center
+    const dx = x - cx;
+    const dy = y - cy;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    // Add extra spacing (e.g., 25px)
+    const offset = 35;
+    const newX = x + (dx / distance) * offset;
+    const newY = y + (dy / distance) * offset;
+
     return (
-        <g transform={`translate(${x},${y})`}>
+        <g transform={`translate(${newX},${newY})`}>
             <text
                 x={0}
                 y={0}
                 dy={4}
                 textAnchor="middle"
-                fill="#22d3ee"
-                fontSize={12}
+                fill="#22d3ee" // Cyan-400
+                fontSize={13}
                 fontWeight="bold"
+                style={{ textShadow: '0 0 10px rgba(34, 211, 238, 0.5)' }}
             >
                 {payload.value}
             </text>
@@ -36,16 +50,22 @@ const CustomTick = ({ payload, x, y, skillPoints, onIncreaseStat }: any) => {
                 <g
                     onClick={() => onIncreaseStat(payload.value)}
                     style={{ cursor: 'pointer' }}
-                    transform="translate(0, -15)"
+                    transform="translate(0, 20)" // Position button below text
                 >
-                    <circle r={8} fill="#10b981" stroke="#fff" strokeWidth={1} />
+                    <circle
+                        r={10}
+                        fill="#10b981" // Emerald-500
+                        stroke="#059669" // Emerald-600
+                        strokeWidth={2}
+                        style={{ filter: "drop-shadow(0 0 5px rgba(16, 185, 129, 0.6))" }}
+                    />
                     <text
                         x={0}
                         y={0}
-                        dy={3}
+                        dy={4} // Center physically
                         textAnchor="middle"
                         fill="#fff"
-                        fontSize={12}
+                        fontSize={14}
                         fontWeight="bold"
                     >
                         +
