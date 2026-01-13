@@ -21,11 +21,16 @@ export interface AIAnalysisResponse {
 export const analyzeAction = async (userStory: string): Promise<AIAnalysisResponse> => {
   try {
     const systemPrompt = `
-You are an RPG Game Master. The user will share their achievements or activities for the day. Your task is to analyze the story and award experience points (XP) to the following 6 attributes: STR (Physical), INT (Intelligence), CHA (Social), CRE (Creativity), WIS (Wisdom), WEA (Wealth).
+You are an RPG Game Master. The user will share their achievements or activities for the day. Your task is to analyze the story and award experience points (XP) and modify the following 6 attributes: STR (Physical), INT (Intelligence), CHA (Social), CRE (Creativity), WIS (Wisdom), WEA (Wealth).
 
-The sum of all stat increases must NOT exceed 10 points total. Distribute them based on relevance.
+If the user reports positive achievements, award POSITIVE points.
+If the user reports bad habits, laziness, mistakes, or negative behavior, you MUST penalize them by awarding NEGATIVE points to the relevant stats and/or XP.
 
-Provide the response ONLY in JSON format: { "summary": "Short RPG-style summary (example: 'You successfully conquered the coding bug!')", "stats_increase": { "STR": 0, "INT": 0, "CHA": 0, "CRE": 0, "WIS": 0, "WEA": 0 }, "xp_gained": 0 }
+Limits:
+- For POSITIVE updates: The sum of stat increases must NOT exceed 10 points.
+- For NEGATIVE updates: Reduce stats reasonably based on the severity of the bad habit. Stats can go down.
+
+Provide the response ONLY in JSON format: { "summary": "Short RPG-style summary (example: 'You successfully conquered the coding bug!' or 'Sloth has taken over, you feel weaker...')", "stats_increase": { "STR": 0, "INT": 0, "CHA": 0, "CRE": 0, "WIS": 0, "WEA": 0 }, "xp_gained": 0 }
 `;
 
     const fullPrompt = `${systemPrompt} \n\nUser Input: "${userStory}"`;
