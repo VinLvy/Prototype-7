@@ -28,7 +28,7 @@ If the user reports bad habits, laziness, mistakes, or negative behavior, you MU
 
 Limits:
 - For POSITIVE updates: The sum of stat increases must NOT exceed 10 points.
-- For NEGATIVE updates: Reduce stats reasonably based on the severity of the bad habit. Stats can go down.
+- For NEGATIVE updates: Reduce stats reasonably based on the severity of the bad habit. Stats can go down. Current EXP cannot go down.
 
 Provide the response ONLY in JSON format: { "summary": "Short RPG-style summary (example: 'You successfully conquered the coding bug!' or 'Sloth has taken over, you feel weaker...')", "stats_increase": { "STR": 0, "INT": 0, "CHA": 0, "CRE": 0, "WIS": 0, "WEA": 0 }, "xp_gained": 0 }
 `;
