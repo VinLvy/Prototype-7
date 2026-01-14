@@ -78,7 +78,7 @@ const CustomTick = ({ payload, x, y, cx, cy, skillPoints, onIncreaseStat }: any)
 
 const HexagonChart: React.FC<HexagonChartProps> = ({ data, skillPoints = 0, onIncreaseStat }) => {
     return (
-        <div style={{ width: '100%', height: 500, position: 'relative' }}>
+        <div className="rounded-2xl border border-gray-700 bg-gradient-to-b from-gray-900/80 to-black/80 shadow-inner" style={{ width: '100%', height: 500, position: 'relative' }}>
             <ResponsiveContainer width="100%" height="100%">
                 <RadarChart cx="50%" cy="50%" outerRadius="70%" data={data}>
                     <defs>
