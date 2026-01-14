@@ -119,8 +119,10 @@ export const updateUserXP = async (userId: string, xpGained: number) => {
     // Default to 0 if null/undefined
     skill_points = skill_points || 0;
 
-    current_exp += xpGained;
-    if (current_exp < 0) current_exp = 0;
+    // Ensure XP never decreases
+    if (xpGained > 0) {
+        current_exp += xpGained;
+    }
 
     // Simple Level Up Formula: 100 XP per level
     const xpNeeded = level * 100;
