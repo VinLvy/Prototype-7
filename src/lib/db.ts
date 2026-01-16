@@ -41,7 +41,18 @@ export const getUserStats = async (userId: string): Promise<UserStats | null> =>
     return data;
 };
 
-export const getUserProfile = async (userId: string) => {
+export interface UserProfile {
+    id: string;
+    level: number;
+    current_exp: number;
+    skill_points: number;
+    username?: string;
+    title?: string;
+    avatar_url?: string;
+    // ... any other fields
+}
+
+export const getUserProfile = async (userId: string): Promise<UserProfile | null> => {
     const { data, error } = await supabase
         .from('users')
         .select('*')
@@ -53,6 +64,18 @@ export const getUserProfile = async (userId: string) => {
         return null;
     }
     return data;
+};
+
+export const updateUserProfile = async (userId: string, updates: Partial<UserProfile>) => {
+    const { error } = await supabase
+        .from('users')
+        .update(updates)
+        .eq('id', userId);
+
+    if (error) {
+        console.error('Error updating user profile:', error);
+        throw error;
+    }
 };
 
 export const updateUserStats = async (userId: string, statsIncrease: { [key: string]: number }) => {
