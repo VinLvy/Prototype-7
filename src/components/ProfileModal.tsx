@@ -3,6 +3,7 @@ import { X, Save, User as UserIcon, Camera } from 'lucide-react';
 import type { UserProfile } from '../lib/db';
 import { uploadAvatar } from '../lib/storage';
 import ImageCropper from './ImageCropper';
+import { getTitleConfig } from '../lib/titles';
 
 interface ProfileModalProps {
     isOpen: boolean;
@@ -13,7 +14,7 @@ interface ProfileModalProps {
 
 export default function ProfileModal({ isOpen, onClose, userProfile, onUpdate }: ProfileModalProps) {
     const [username, setUsername] = useState('');
-    const [title, setTitle] = useState('');
+    // Title is now derived, not editable state
     const [avatarUrl, setAvatarUrl] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
@@ -24,7 +25,6 @@ export default function ProfileModal({ isOpen, onClose, userProfile, onUpdate }:
     useEffect(() => {
         if (userProfile) {
             setUsername(userProfile.username || '');
-            setTitle(userProfile.title || '');
             setAvatarUrl(userProfile.avatar_url || '');
         }
     }, [userProfile]);
@@ -79,7 +79,7 @@ export default function ProfileModal({ isOpen, onClose, userProfile, onUpdate }:
         e.preventDefault();
         setIsLoading(true);
         try {
-            await onUpdate({ username, title, avatar_url: avatarUrl });
+            await onUpdate({ username, avatar_url: avatarUrl });
             onClose();
         } catch (error) {
             console.error(error);
@@ -160,13 +160,15 @@ export default function ProfileModal({ isOpen, onClose, userProfile, onUpdate }:
 
                         <div>
                             <label className="block text-sm font-medium text-gray-400 mb-1">Title / Class</label>
-                            <input
-                                type="text"
-                                value={title}
-                                onChange={(e) => setTitle(e.target.value)}
-                                className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                                placeholder="e.g. Level 1 Warrior"
-                            />
+                            {(() => {
+                                const titleConfig = getTitleConfig(userProfile?.title);
+                                return (
+                                    <div className={`w-full border rounded-lg px-4 py-2 bg-gradient-to-r flex items-center justify-between ${titleConfig.textColor} ${titleConfig.borderColor} ${titleConfig.bgGradient}`}>
+                                        <span className="font-bold">{userProfile?.title || titleConfig.name}</span>
+                                        <span className="text-xs opacity-75 border border-current px-2 py-0.5 rounded">Auto-Assigned</span>
+                                    </div>
+                                );
+                            })()}
                         </div>
 
                         <div className="pt-4 flex justify-end gap-3">
