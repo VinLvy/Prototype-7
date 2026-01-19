@@ -49,7 +49,7 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
 
     return (
         <div
-            className={`bg-gray-800 text-white h-screen transition-all duration-300 flex flex-col border-r border-gray-700 ${isOpen ? 'w-64' : 'w-20'
+            className={`bg-gray-800 text-white h-screen transition-all duration-300 flex flex-col border-r border-gray-700 ${isOpen ? 'w-55' : 'w-20'
                 }`}
         >
             {/* Header / Toggle */}
