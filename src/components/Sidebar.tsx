@@ -3,6 +3,7 @@ import supabase from '../lib/supabase';
 import { LayoutDashboard, History, Settings, LogOut, ChevronLeft, ChevronRight, User as UserIcon, Edit2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { getUserProfile, updateUserProfile, type UserProfile } from '../lib/db';
+import { getTitleConfig } from '../lib/titles';
 import ProfileModal from './ProfileModal';
 
 interface SidebarProps {
@@ -91,9 +92,14 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
                     <h3 className="font-bold text-white truncate max-w-[12rem] mx-auto text-lg leading-tight">
                         {userProfile?.username || 'Adventurer'}
                     </h3>
-                    <p className="text-xs text-purple-400 truncate max-w-[12rem] mx-auto mt-1 font-medium bg-purple-900/30 px-2 py-0.5 rounded-full inline-block">
-                        {userProfile?.title || 'Novice'}
-                    </p>
+                    {(() => {
+                        const titleConfig = getTitleConfig(userProfile?.title);
+                        return (
+                            <p className={`text-xs truncate max-w-[12rem] mx-auto mt-1 font-medium px-2 py-0.5 rounded-md inline-block border bg-gradient-to-r ${titleConfig.textColor} ${titleConfig.borderColor} ${titleConfig.bgGradient}`}>
+                                {userProfile?.title || titleConfig.name}
+                            </p>
+                        );
+                    })()}
                 </div>
             </div>
 
