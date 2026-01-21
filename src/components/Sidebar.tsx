@@ -1,10 +1,11 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import supabase from '../lib/supabase';
-import { LayoutDashboard, History, Settings, LogOut, ChevronLeft, ChevronRight, User as UserIcon, Edit2 } from 'lucide-react';
+import { LayoutDashboard, History, Settings, LogOut, ChevronLeft, ChevronRight, User as UserIcon, Edit2, Info } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { getUserProfile, updateUserProfile, type UserProfile } from '../lib/db';
+import { getUserProfile, updateUserProfile, getUserStats, type UserProfile, type UserStats } from '../lib/db';
 import { getTitleConfig } from '../lib/titles';
 import ProfileModal from './ProfileModal';
+import TitlesModal from './TitlesModal';
 
 interface SidebarProps {
     isOpen: boolean;
@@ -14,7 +15,9 @@ interface SidebarProps {
 export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
     const navigate = useNavigate();
     const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+    const [userStats, setUserStats] = useState<UserStats | null>(null);
     const [isProfileModalOpen, setProfileModalOpen] = useState(false);
+    const [isTitlesModalOpen, setTitlesModalOpen] = useState(false);
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -22,6 +25,9 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
             if (user) {
                 const profile = await getUserProfile(user.id);
                 setUserProfile(profile);
+
+                const stats = await getUserStats(user.id);
+                setUserStats(stats);
             }
         };
         fetchUser();
@@ -40,6 +46,13 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
     const handleLogout = async () => {
         await supabase.auth.signOut();
         navigate('/login');
+    };
+
+    // Calculate highest stat for TitlesModal
+    const getHighestStat = () => {
+        if (!userStats) return 0;
+        const { strength, intelligence, charisma, creativity, wisdom, wealth } = userStats;
+        return Math.max(strength, intelligence, charisma, creativity, wisdom, wealth);
     };
 
     const navItems = [
@@ -88,16 +101,25 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
                     </div>
                 </div>
 
-                <div className={`mt-3 text-center overflow-hidden transition-all duration-300 ${isOpen ? 'opacity-100 max-h-20' : 'opacity-0 max-h-0'}`}>
+                <div className={`mt-3 text-center overflow-hidden transition-all duration-300 ${isOpen ? 'opacity-100 max-h-24' : 'opacity-0 max-h-0'}`}>
                     <h3 className="font-bold text-white truncate max-w-[12rem] mx-auto text-lg leading-tight">
                         {userProfile?.username || 'Adventurer'}
                     </h3>
                     {(() => {
                         const titleConfig = getTitleConfig(userProfile?.title);
                         return (
-                            <p className={`text-xs truncate max-w-[12rem] mx-auto mt-1 font-medium px-2 py-0.5 rounded-md inline-block border bg-gradient-to-r ${titleConfig.textColor} ${titleConfig.borderColor} ${titleConfig.bgGradient}`}>
-                                {userProfile?.title || titleConfig.name}
-                            </p>
+                            <div
+                                onClick={() => setTitlesModalOpen(true)}
+                                className="group relative inline-block mt-1 cursor-pointer"
+                                title="View Title Requirements"
+                            >
+                                <p className={`text-xs truncate max-w-[12rem] mx-auto font-medium px-2 py-0.5 rounded-md border bg-gradient-to-r ${titleConfig.textColor} ${titleConfig.borderColor} ${titleConfig.bgGradient} group-hover:brightness-110 transition-all`}>
+                                    {userProfile?.title || titleConfig.name}
+                                </p>
+                                <div className="absolute -right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <Info size={12} className="text-gray-400" />
+                                </div>
+                            </div>
                         );
                     })()}
                 </div>
@@ -156,6 +178,13 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
                 onClose={() => setProfileModalOpen(false)}
                 userProfile={userProfile}
                 onUpdate={handleProfileUpdate}
+            />
+
+            <TitlesModal
+                isOpen={isTitlesModalOpen}
+                onClose={() => setTitlesModalOpen(false)}
+                currentTitle={userProfile?.title}
+                highestStat={getHighestStat()}
             />
         </div >
     );
