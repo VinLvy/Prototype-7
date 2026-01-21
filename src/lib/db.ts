@@ -1,4 +1,5 @@
 import supabase from './supabase';
+import { getTitleForStats } from './titles';
 
 export interface UserStats {
     user_id: string;
@@ -121,6 +122,16 @@ export const updateUserStats = async (userId: string, statsIncrease: { [key: str
         throw error;
     }
 
+    // 4. Update Title based on new total stats
+    const finalStats = { ...currentStats, ...newStats };
+    const titleConfig = getTitleForStats(finalStats as unknown as Record<string, number>); // Cast to suit the flexible key type
+
+    // Update title in users table
+    await supabase
+        .from('users')
+        .update({ title: titleConfig.name })
+        .eq('id', userId);
+
     return newStats;
 };
 
@@ -213,20 +224,19 @@ export const allocateSkillPoint = async (userId: string, statKey: string) => {
 
     if (statsError) throw statsError;
 
-    // Decrement Skill Point
-    const { error: pointError } = await supabase
+    // Update Title
+    const newStats = { ...currentStats, [column]: newValue };
+    const titleConfig = getTitleForStats(newStats as unknown as Record<string, number>);
+
+    await supabase
         .from('users')
-        .update({ skill_points: user.skill_points - 1 })
+        .update({
+            skill_points: user.skill_points - 1,
+            title: titleConfig.name
+        })
         .eq('id', userId);
 
-    if (pointError) {
-        // Critical: Failed to deduct point but added stat. 
-        // In real app, revert stat or use RPC.
-        console.error("Critical: Failed to deduct skill point", pointError);
-        throw pointError;
-    }
-
-    return { success: true, newStatValue: newValue, remainingPoints: user.skill_points - 1 };
+    return { success: true, remainingPoints: user.skill_points - 1 };
 };
 
 export const getActivityLogs = async (userId: string) => {
