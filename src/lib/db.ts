@@ -49,6 +49,7 @@ export interface UserProfile {
     skill_points: number;
     username?: string;
     title?: string;
+    character_class?: string;
     avatar_url?: string;
     // ... any other fields
 }
