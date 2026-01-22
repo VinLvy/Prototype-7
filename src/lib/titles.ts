@@ -27,7 +27,7 @@ export const TITLES: TitleTier[] = [
     },
     {
         name: 'Adept',
-        minStat: 30,
+        minStat: 15,
         color: '#3b82f6', // blue-500
         textColor: 'text-blue-400',
         borderColor: 'border-blue-500',
@@ -35,7 +35,7 @@ export const TITLES: TitleTier[] = [
     },
     {
         name: 'Expert',
-        minStat: 50,
+        minStat: 30,
         color: '#a855f7', // purple-500
         textColor: 'text-purple-400',
         borderColor: 'border-purple-500',
@@ -43,7 +43,7 @@ export const TITLES: TitleTier[] = [
     },
     {
         name: 'Master',
-        minStat: 80,
+        minStat: 50,
         color: '#eab308', // yellow-500
         textColor: 'text-yellow-400',
         borderColor: 'border-yellow-500',
@@ -51,7 +51,7 @@ export const TITLES: TitleTier[] = [
     },
     {
         name: 'Legend',
-        minStat: 100,
+        minStat: 80,
         color: '#f97316', // orange-500
         textColor: 'text-orange-400',
         borderColor: 'border-orange-500',
@@ -59,7 +59,7 @@ export const TITLES: TitleTier[] = [
     },
     {
         name: 'Mythic',
-        minStat: 200,
+        minStat: 100,
         color: '#ef4444', // red-500
         textColor: 'text-red-500 font-bold',
         borderColor: 'border-red-500',
