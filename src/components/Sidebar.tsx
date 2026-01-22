@@ -6,6 +6,8 @@ import { getUserProfile, updateUserProfile, getUserStats, type UserProfile, type
 import { getTitleConfig } from '../lib/titles';
 import ProfileModal from './ProfileModal';
 import TitlesModal from './TitlesModal';
+import ClassesModal from './ClassesModal';
+import { getClassConfig } from '../lib/classes';
 
 interface SidebarProps {
     isOpen: boolean;
@@ -18,6 +20,7 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
     const [userStats, setUserStats] = useState<UserStats | null>(null);
     const [isProfileModalOpen, setProfileModalOpen] = useState(false);
     const [isTitlesModalOpen, setTitlesModalOpen] = useState(false);
+    const [isClassesModalOpen, setClassesModalOpen] = useState(false);
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -40,6 +43,16 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
             // Refresh local state
             const updated = await getUserProfile(user.id);
             setUserProfile(updated);
+        }
+    };
+
+    const handleClassUpdate = async (classId: string) => {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+            await updateUserProfile(user.id, { character_class: classId });
+            const updated = await getUserProfile(user.id);
+            setUserProfile(updated);
+            setClassesModalOpen(false);
         }
     };
 
@@ -123,6 +136,28 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
                         );
                     })()}
                 </div>
+
+                {/* Class Badge */}
+                <div className={`mt-2 transition-all duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 h-0 overflow-hidden'}`}>
+                    {(() => {
+                        const classConfig = getClassConfig(userProfile?.character_class);
+                        const ClassIcon = classConfig.icon;
+                        return (
+                            <button
+                                onClick={() => setClassesModalOpen(true)}
+                                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border bg-gray-900/50 hover:bg-gray-800 transition-all group ${classConfig.borderColor}`}
+                                title="Change Class"
+                            >
+                                <div className={`p-1 rounded bg-gray-800 ${classConfig.color}`}>
+                                    <ClassIcon size={14} />
+                                </div>
+                                <span className={`text-xs font-bold ${classConfig.color}`}>
+                                    {classConfig.name}
+                                </span>
+                            </button>
+                        );
+                    })()}
+                </div>
             </div>
 
             {/* Navigation */}
@@ -185,6 +220,14 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
                 onClose={() => setTitlesModalOpen(false)}
                 currentTitle={userProfile?.title}
                 highestStat={getHighestStat()}
+            />
+
+            <ClassesModal
+                isOpen={isClassesModalOpen}
+                onClose={() => setClassesModalOpen(false)}
+                userStats={userStats}
+                currentClassId={userProfile?.character_class}
+                onSelectClass={handleClassUpdate}
             />
         </div >
     );
