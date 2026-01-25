@@ -1,5 +1,5 @@
 import type { UserStats } from './db';
-import { Sword, Wand, Music, Hammer, Scroll, Coins, User, Shield, Book, Mic, Wrench, Sun, Gem } from 'lucide-react';
+import { Sword, Wand, Music, Hammer, Scroll, Coins, User, Shield, Book, Mic, Wrench, Sun, Gem, Crown, Zap, Star, Lightbulb, Eye, Landmark } from 'lucide-react';
 
 export interface CharacterClass {
     id: string;
@@ -156,6 +156,72 @@ export const CLASSES: CharacterClass[] = [
         color: 'text-yellow-400',
         borderColor: 'border-yellow-500',
         bgGradient: 'from-yellow-900 to-yellow-950',
+    },
+    {
+        id: 'warlord',
+        name: 'Warlord',
+        description: 'A legendary conqueror who rules the battlefield.',
+        requirement: (stats) => stats.strength >= 99,
+        uiRequirement: 'Strength 99+',
+        icon: Crown,
+        color: 'text-red-500',
+        borderColor: 'border-red-600',
+        bgGradient: 'from-red-950 to-black',
+    },
+    {
+        id: 'archmage',
+        name: 'Archmage',
+        description: 'A supreme wielder of arcane secrets and cosmic truths.',
+        requirement: (stats) => stats.intelligence >= 99,
+        uiRequirement: 'Intelligence 99+',
+        icon: Zap,
+        color: 'text-blue-500',
+        borderColor: 'border-blue-600',
+        bgGradient: 'from-blue-950 to-black',
+    },
+    {
+        id: 'virtuoso',
+        name: 'Virtuoso',
+        description: 'A world-renowned icon whose legacy is eternal.',
+        requirement: (stats) => stats.charisma >= 99,
+        uiRequirement: 'Charisma 99+',
+        icon: Star,
+        color: 'text-pink-500',
+        borderColor: 'border-pink-600',
+        bgGradient: 'from-pink-950 to-black',
+    },
+    {
+        id: 'visionary',
+        name: 'Visionary',
+        description: 'A genius who reshapes reality with their ideas.',
+        requirement: (stats) => stats.creativity >= 99,
+        uiRequirement: 'Creativity 99+',
+        icon: Lightbulb,
+        color: 'text-orange-500',
+        borderColor: 'border-orange-600',
+        bgGradient: 'from-orange-950 to-black',
+    },
+    {
+        id: 'prophet',
+        name: 'Prophet',
+        description: 'A divine messenger who sees the threads of fate.',
+        requirement: (stats) => stats.wisdom >= 99,
+        uiRequirement: 'Wisdom 99+',
+        icon: Eye,
+        color: 'text-green-500',
+        borderColor: 'border-green-600',
+        bgGradient: 'from-green-950 to-black',
+    },
+    {
+        id: 'tycoon',
+        name: 'Tycoon',
+        description: 'A master of empires whose wealth knows no bounds.',
+        requirement: (stats) => stats.wealth >= 99,
+        uiRequirement: 'Wealth 99+',
+        icon: Landmark,
+        color: 'text-yellow-500',
+        borderColor: 'border-yellow-600',
+        bgGradient: 'from-yellow-950 to-black',
     }
 ];
 
