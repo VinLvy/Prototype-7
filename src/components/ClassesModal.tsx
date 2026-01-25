@@ -1,4 +1,4 @@
-import { X, Lock, Unlock, Check } from 'lucide-react';
+import { X, Lock, Check } from 'lucide-react';
 import { CLASSES, type CharacterClass } from '../lib/classes';
 import { type UserStats } from '../lib/db';
 
@@ -35,79 +35,86 @@ export default function ClassesModal({ isOpen, onClose, userStats, currentClassI
 
                 {/* Content */}
                 <div className="p-6 overflow-y-auto custom-scrollbar flex-1">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {CLASSES.map((charClass: CharacterClass) => {
-                            // Check specific requirement
-                            const isUnlocked = userStats ? charClass.requirement(userStats) : false;
-                            const isCurrent = activeClassId === charClass.id;
-                            const Icon = charClass.icon;
+                    {['General', 'Strength', 'Intelligence', 'Charisma', 'Creativity', 'Wisdom', 'Wealth'].map((stat) => {
+                        const classesInGroup = CLASSES.filter(c => c.primaryStat === stat);
+                        if (classesInGroup.length === 0) return null;
 
-                            return (
-                                <div
-                                    key={charClass.id}
-                                    className={`relative p-5 rounded-xl border-2 transition-all duration-300 group ${isCurrent
-                                        ? `${charClass.borderColor} bg-gray-800 shadow-lg shadow-${charClass.color}/10 scale-[1.01]`
-                                        : isUnlocked
-                                            ? 'border-gray-600 bg-gray-800/50 hover:border-gray-500 hover:bg-gray-800'
-                                            : 'border-gray-800 bg-gray-900/50 opacity-60 grayscale-[0.5]'
-                                        }`}
-                                >
-                                    <div className="flex items-start justify-between mb-3">
-                                        <div className="flex items-center gap-4">
-                                            <div className={`p-3 rounded-lg ${isUnlocked ? charClass.bgGradient : 'bg-gray-800'} border ${isUnlocked ? charClass.borderColor : 'border-gray-700'} shadow-lg`}>
-                                                <Icon size={24} className={isUnlocked ? charClass.color : 'text-gray-500'} />
-                                            </div>
-                                            <div>
-                                                <h3 className={`font-bold text-lg ${isUnlocked ? 'text-white' : 'text-gray-400'}`}>
-                                                    {charClass.name}
-                                                </h3>
-                                                <p className="text-xs text-gray-400 font-medium">
-                                                    {charClass.uiRequirement}
-                                                </p>
-                                            </div>
-                                        </div>
+                        return (
+                            <div key={stat} className="mb-8">
+                                <h3 className="text-lg font-bold text-white mb-4 px-1 flex items-center gap-2 border-b border-gray-700 pb-2">
+                                    <span className="text-purple-400 uppercase tracking-wider text-sm">{stat} Path</span>
+                                </h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    {classesInGroup.map((charClass: CharacterClass) => {
+                                        // Check specific requirement
+                                        const isUnlocked = userStats ? charClass.requirement(userStats) : false;
+                                        const isCurrent = activeClassId === charClass.id;
+                                        const Icon = charClass.icon;
 
-                                        {isCurrent ? (
-                                            <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full border ${charClass.borderColor} ${charClass.bgGradient} ${charClass.color}`}>
-                                                <Check size={14} className="stroke-[3]" />
-                                                <span className="text-xs font-bold tracking-wide">ACTIVE</span>
-                                            </div>
-                                        ) : isUnlocked ? (
-                                            <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <Unlock size={18} className="text-gray-400" />
-                                            </div>
-                                        ) : (
-                                            <Lock size={18} className="text-gray-600" />
-                                        )}
-                                    </div>
-
-                                    <p className="text-sm text-gray-400 mb-4 h-10 line-clamp-2">
-                                        {charClass.description}
-                                    </p>
-
-                                    {/* Action Button */}
-                                    <div className="mt-2">
-                                        {isCurrent ? (
-                                            <button disabled className="w-full py-2 rounded-lg bg-gray-700/50 text-gray-400 text-sm font-medium cursor-default">
-                                                Current Class
-                                            </button>
-                                        ) : isUnlocked ? (
-                                            <button // Functionality to select class
-                                                onClick={() => onSelectClass(charClass.id)}
-                                                className={`w-full py-2 rounded-lg border ${charClass.borderColor} text-white font-medium text-sm hover:bg-white/5 active:scale-[0.98] transition-all flex items-center justify-center gap-2`}
+                                        return (
+                                            <div
+                                                key={charClass.id}
+                                                className={`relative p-5 rounded-xl border-2 transition-all duration-300 group flex flex-col ${isCurrent
+                                                    ? `${charClass.borderColor} bg-gray-800 shadow-lg shadow-${charClass.color.split('-')[1]}-500/10 scale-[1.02] z-10`
+                                                    : isUnlocked
+                                                        ? 'border-gray-600 bg-gray-800/50 hover:border-gray-500 hover:bg-gray-800 hover:scale-[1.01]'
+                                                        : 'border-gray-800 bg-gray-900/50 opacity-60 grayscale-[0.8]'
+                                                    }`}
                                             >
-                                                Select Class
-                                            </button>
-                                        ) : (
-                                            <button disabled className="w-full py-2 rounded-lg bg-gray-900 border border-gray-800 text-gray-600 text-sm font-medium cursor-not-allowed">
-                                                Locked
-                                            </button>
-                                        )}
-                                    </div>
+                                                <div className="flex items-start justify-between mb-3">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className={`p-2.5 rounded-lg ${isUnlocked ? charClass.bgGradient : 'bg-gray-800'} border ${isUnlocked ? charClass.borderColor : 'border-gray-700'} shadow-lg`}>
+                                                            <Icon size={20} className={isUnlocked ? charClass.color : 'text-gray-500'} />
+                                                        </div>
+                                                        <div>
+                                                            <h3 className={`font-bold text-base ${isUnlocked ? 'text-white' : 'text-gray-400'}`}>
+                                                                {charClass.name}
+                                                            </h3>
+                                                            <p className="text-[10px] text-gray-400 font-mono uppercase tracking-wide">
+                                                                {charClass.uiRequirement}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+
+                                                    {isCurrent ? (
+                                                        <div className={`flex items-center justify-center w-6 h-6 rounded-full border ${charClass.borderColor} ${charClass.bgGradient} ${charClass.color}`}>
+                                                            <Check size={12} className="stroke-[4]" />
+                                                        </div>
+                                                    ) : !isUnlocked && (
+                                                        <Lock size={16} className="text-gray-600 mt-1" />
+                                                    )}
+                                                </div>
+
+                                                <p className="text-xs text-gray-400 mb-4 flex-1">
+                                                    {charClass.description}
+                                                </p>
+
+                                                {/* Action Button */}
+                                                <div className="mt-auto">
+                                                    {isCurrent ? (
+                                                        <button disabled className="w-full py-1.5 rounded-lg bg-gray-700/50 text-gray-400 text-xs font-bold uppercase tracking-wide cursor-default">
+                                                            Active
+                                                        </button>
+                                                    ) : isUnlocked ? (
+                                                        <button
+                                                            onClick={() => onSelectClass(charClass.id)}
+                                                            className={`w-full py-1.5 rounded-lg border ${charClass.borderColor} text-white font-medium text-xs hover:bg-white/10 active:scale-[0.98] transition-all flex items-center justify-center gap-2`}
+                                                        >
+                                                            Select
+                                                        </button>
+                                                    ) : (
+                                                        <button disabled className="w-full py-1.5 rounded-lg bg-gray-900 border border-gray-800 text-gray-600 text-xs font-medium cursor-not-allowed">
+                                                            Locked
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
                                 </div>
-                            );
-                        })}
-                    </div>
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
         </div>
