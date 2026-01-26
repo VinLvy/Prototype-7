@@ -74,9 +74,9 @@ export default function TitlesModal({ isOpen, onClose, currentTitle, highestStat
                                     </div>
 
                                     {/* Progress Bar (Visual only) */}
-                                    <div className="mt-3 h-1.5 w-full bg-gray-700 rounded-full overflow-hidden">
+                                    <div className="mt-3 h-1.5 w-full bg-red-700 rounded-full overflow-hidden">
                                         <div
-                                            className={`h-full transition-all duration-500 ${isUnlocked ? tier.bgGradient : 'bg-gray-600'}`}
+                                            className={`h-full transition-all duration-500 ${isUnlocked ? tier.bgGradient : 'bg-blue-500'}`}
                                             style={{
                                                 width: Math.min(100, Math.max(0, (highestStat / (tier.minStat || 1)) * 100)) + '%'
                                             }}
