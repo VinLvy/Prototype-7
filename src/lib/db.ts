@@ -12,6 +12,22 @@ export interface UserStats {
     updated_at: string;
 }
 
+// Simple Event Bus for User Data Updates
+type DataChangeListener = () => void;
+const listeners: DataChangeListener[] = [];
+
+export const onUserDataChange = (listener: DataChangeListener) => {
+    listeners.push(listener);
+    return () => {
+        const index = listeners.indexOf(listener);
+        if (index > -1) listeners.splice(index, 1);
+    };
+};
+
+const notifyUserDataChange = () => {
+    listeners.forEach(l => l());
+};
+
 export const saveActivityLog = async (userId: string, description: string, aiAnalysis: any) => {
     const { error } = await supabase
         .from('activity_logs')
@@ -78,6 +94,7 @@ export const updateUserProfile = async (userId: string, updates: Partial<UserPro
         console.error('Error updating user profile:', error);
         throw error;
     }
+    notifyUserDataChange();
 };
 
 export const updateUserStats = async (userId: string, statsIncrease: { [key: string]: number }) => {
@@ -133,6 +150,8 @@ export const updateUserStats = async (userId: string, statsIncrease: { [key: str
         .update({ title: titleConfig.name })
         .eq('id', userId);
 
+    // however, since it updates global state (stats + title), we SHOULD notify.
+    notifyUserDataChange();
     return newStats;
 };
 
@@ -180,6 +199,7 @@ export const updateUserXP = async (userId: string, xpGained: number) => {
         console.error('Error updating user XP:', updateError);
     }
 
+    notifyUserDataChange();
     return { levelUp, newLevel: level, currentExp: current_exp, skillPoints: skill_points };
 };
 
@@ -237,6 +257,7 @@ export const allocateSkillPoint = async (userId: string, statKey: string) => {
         })
         .eq('id', userId);
 
+    notifyUserDataChange();
     return { success: true, remainingPoints: user.skill_points - 1 };
 };
 
