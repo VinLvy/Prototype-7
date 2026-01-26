@@ -141,14 +141,30 @@ export const updateUserStats = async (userId: string, statsIncrease: { [key: str
     }
 
     // 4. Update Title based on new total stats
+    // 4. Update Title based on new total stats
     const finalStats = { ...currentStats, ...newStats };
-    const titleConfig = getTitleForStats(finalStats as unknown as Record<string, number>); // Cast to suit the flexible key type
+
+    // Explicitly select only stat columns to prevent any interference
+    const cleanStats: { [key: string]: number } = {
+        strength: finalStats.strength,
+        intelligence: finalStats.intelligence,
+        charisma: finalStats.charisma,
+        creativity: finalStats.creativity,
+        wisdom: finalStats.wisdom,
+        wealth: finalStats.wealth
+    };
+
+    const titleConfig = getTitleForStats(cleanStats);
 
     // Update title in users table
-    await supabase
+    const { error: titleError } = await supabase
         .from('users')
         .update({ title: titleConfig.name })
         .eq('id', userId);
+
+    if (titleError) {
+        console.error('Error updating user title:', titleError);
+    }
 
     // however, since it updates global state (stats + title), we SHOULD notify.
     notifyUserDataChange();
@@ -247,15 +263,27 @@ export const allocateSkillPoint = async (userId: string, statKey: string) => {
 
     // Update Title
     const newStats = { ...currentStats, [column]: newValue };
-    const titleConfig = getTitleForStats(newStats as unknown as Record<string, number>);
 
-    await supabase
+    const cleanStats: { [key: string]: number } = {
+        strength: newStats.strength,
+        intelligence: newStats.intelligence,
+        charisma: newStats.charisma,
+        creativity: newStats.creativity,
+        wisdom: newStats.wisdom,
+        wealth: newStats.wealth
+    };
+
+    const titleConfig = getTitleForStats(cleanStats);
+
+    const { error: finalError } = await supabase
         .from('users')
         .update({
             skill_points: user.skill_points - 1,
             title: titleConfig.name
         })
         .eq('id', userId);
+
+    if (finalError) throw finalError;
 
     notifyUserDataChange();
     return { success: true, remainingPoints: user.skill_points - 1 };
