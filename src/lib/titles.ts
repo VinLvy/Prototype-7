@@ -69,7 +69,9 @@ export const TITLES: TitleTier[] = [
 
 export const getTitleForStats = (stats: { [key: string]: number }): TitleTier => {
     // Determine title based on the HIGHEST single stat
-    const maxStat = Math.max(...Object.values(stats));
+    // Filter out non-numeric values (like ids or timestamps that might be in the object)
+    const statValues = Object.values(stats).filter(val => typeof val === 'number');
+    const maxStat = Math.max(...statValues, 0); // Default to 0 if empty
 
     // Find the highest tier where minStat <= maxStat
     let currentTier = TITLES[0];
