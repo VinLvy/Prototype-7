@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import supabase from '../lib/supabase';
 import { LayoutDashboard, History, Settings, LogOut, ChevronLeft, ChevronRight, User as UserIcon, Edit2, Info } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { getUserProfile, updateUserProfile, getUserStats, type UserProfile, type UserStats } from '../lib/db';
+import { onUserDataChange, getUserProfile, updateUserProfile, getUserStats, type UserProfile, type UserStats } from '../lib/db';
 import { getTitleConfig } from '../lib/titles';
 import ProfileModal from './ProfileModal';
 import TitlesModal from './TitlesModal';
@@ -21,7 +21,6 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
     const [isProfileModalOpen, setProfileModalOpen] = useState(false);
     const [isTitlesModalOpen, setTitlesModalOpen] = useState(false);
     const [isClassesModalOpen, setClassesModalOpen] = useState(false);
-
     useEffect(() => {
         const fetchUser = async () => {
             const { data: { user } } = await supabase.auth.getUser();
@@ -34,6 +33,14 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
             }
         };
         fetchUser();
+
+        const unsubscribe = onUserDataChange(() => {
+            fetchUser();
+        });
+
+        return () => {
+            unsubscribe();
+        };
     }, []);
 
     const handleProfileUpdate = async (updates: Partial<UserProfile>) => {
