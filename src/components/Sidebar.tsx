@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import supabase from '../lib/supabase';
-import { LayoutDashboard, History, Settings, LogOut, ChevronLeft, ChevronRight, User as UserIcon, Edit2, Info } from 'lucide-react';
+import { LayoutDashboard, History, Settings, LogOut, ChevronLeft, ChevronRight, User as UserIcon, Edit2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { onUserDataChange, getUserProfile, updateUserProfile, getUserStats, type UserProfile, type UserStats } from '../lib/db';
 import { getTitleConfig } from '../lib/titles';
@@ -63,17 +63,25 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
         }
     };
 
+    const handleTitleUpdate = async (titleId: string) => {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+            await updateUserProfile(user.id, { title: titleId });
+            const updated = await getUserProfile(user.id);
+            setUserProfile(updated);
+            setTitlesModalOpen(false);
+        }
+    };
+
     const handleLogout = async () => {
         await supabase.auth.signOut();
         navigate('/login');
     };
 
     // Calculate highest stat for TitlesModal
-    const getHighestStat = () => {
-        if (!userStats) return 0;
-        const { strength, intelligence, charisma, creativity, wisdom, wealth } = userStats;
-        return Math.max(strength, intelligence, charisma, creativity, wisdom, wealth);
-    };
+    // (This helper might not be needed for props anymore but safe to keep if unsure, 
+    // though we are removing the prop that used it. Let's keep it if it's used elsewhere? 
+    // It's only used in the removed prop. I'll remove it to be clean.)
 
     const navItems = [
         { name: 'Dashboard', path: '/dashboard', icon: <LayoutDashboard size={24} /> },
@@ -131,13 +139,13 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
                             <div
                                 onClick={() => setTitlesModalOpen(true)}
                                 className="group relative inline-block mt-1 cursor-pointer"
-                                title="View Title Requirements"
+                                title="Change Title"
                             >
                                 <p className={`text-xs truncate max-w-[12rem] mx-auto font-medium px-2 py-0.5 rounded-md border bg-gradient-to-r ${titleConfig.textColor} ${titleConfig.borderColor} ${titleConfig.bgGradient} group-hover:brightness-110 transition-all`}>
                                     {userProfile?.title || titleConfig.name}
                                 </p>
                                 <div className="absolute -right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <Info size={12} className="text-gray-400" />
+                                    <Edit2 size={12} className="text-gray-400" />
                                 </div>
                             </div>
                         );
@@ -225,8 +233,9 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
             <TitlesModal
                 isOpen={isTitlesModalOpen}
                 onClose={() => setTitlesModalOpen(false)}
-                currentTitle={userProfile?.title}
-                highestStat={getHighestStat()}
+                userStats={userStats}
+                currentTitleId={userProfile?.title}
+                onSelectTitle={handleTitleUpdate}
             />
 
             <ClassesModal
