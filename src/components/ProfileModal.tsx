@@ -3,7 +3,7 @@ import { X, Save, User as UserIcon, Camera } from 'lucide-react';
 import type { UserProfile } from '../lib/db';
 import { uploadAvatar } from '../lib/storage';
 import ImageCropper from './ImageCropper';
-import { getTitleConfig } from '../lib/titles';
+// import { getTitleConfig } from '../lib/titles';
 
 interface ProfileModalProps {
     isOpen: boolean;
@@ -158,7 +158,7 @@ export default function ProfileModal({ isOpen, onClose, userProfile, onUpdate }:
                             />
                         </div>
 
-                        <div>
+                        {/* <div>
                             <label className="block text-sm font-medium text-gray-400 mb-1">Title / Class</label>
                             {(() => {
                                 const titleConfig = getTitleConfig(userProfile?.title);
@@ -169,7 +169,7 @@ export default function ProfileModal({ isOpen, onClose, userProfile, onUpdate }:
                                     </div>
                                 );
                             })()}
-                        </div>
+                        </div> */}
 
                         <div className="pt-4 flex justify-end gap-3">
                             <button
