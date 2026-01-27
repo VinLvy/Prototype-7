@@ -54,7 +54,7 @@ export default function TitlesModal({ isOpen, onClose, userStats, currentTitleId
 
                             // Check if active (handle potential case sensitivity or legacy names)
                             // We compare normalized IDs/names
-                            const isCurrent = activeTitleId === title.id || activeTitleId === title.name.toLowerCase();
+                            const isCurrent = activeTitleId === title.id || activeTitleId === title.name;
 
                             const Icon = title.icon;
 

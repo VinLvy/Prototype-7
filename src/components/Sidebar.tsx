@@ -142,7 +142,7 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
                                 title="Change Title"
                             >
                                 <p className={`text-xs truncate max-w-[12rem] mx-auto font-medium px-2 py-0.5 rounded-md border bg-gradient-to-r ${titleConfig.textColor} ${titleConfig.borderColor} ${titleConfig.bgGradient} group-hover:brightness-110 transition-all`}>
-                                    {userProfile?.title || titleConfig.name}
+                                    {(userProfile?.title || titleConfig.name).toUpperCase()}
                                 </p>
                                 <div className="absolute -right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
                                     <Edit2 size={12} className="text-gray-400" />
