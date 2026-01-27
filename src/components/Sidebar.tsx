@@ -107,7 +107,7 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
             </div>
 
             {/* Profile Section */}
-            <div className={`flex flex-col items-center py-6 border-b border-gray-700 transition-all duration-300 ${isOpen ? 'px-4' : 'px-2'}`}>
+            <div className={`flex flex-col items-center py-3 mt-4 border-b border-gray-700 transition-all duration-300 ${isOpen ? 'px-4' : 'px-2'}`}>
                 <div
                     onClick={() => setProfileModalOpen(true)}
                     className="relative cursor-pointer group shrink-0"
@@ -153,7 +153,7 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
                 </div>
 
                 {/* Class Badge */}
-                <div className={`mt-2 transition-all duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 h-0 overflow-hidden'}`}>
+                <div className={`mt-2 mb-1 transition-all duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 h-0 overflow-hidden'}`}>
                     {(() => {
                         const classConfig = getClassConfig(userProfile?.character_class);
                         const ClassIcon = classConfig.icon;
