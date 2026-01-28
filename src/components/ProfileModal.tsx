@@ -3,7 +3,7 @@ import { X, Save, User as UserIcon, Camera } from 'lucide-react';
 import type { UserProfile } from '../lib/db';
 import { uploadAvatar } from '../lib/storage';
 import ImageCropper from './ImageCropper';
-// import { getTitleConfig } from '../lib/titles';
+import { getTitleConfig } from '../lib/titles';
 
 interface ProfileModalProps {
     isOpen: boolean;
@@ -117,24 +117,29 @@ export default function ProfileModal({ isOpen, onClose, userProfile, onUpdate }:
                         <div className="flex justify-center mb-6">
                             <div className="relative group cursor-pointer">
                                 <label htmlFor="avatar-upload" className="cursor-pointer block">
-                                    <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-purple-500/30 bg-gray-700 relative">
-                                        {isUploading ? (
-                                            <div className="w-full h-full flex items-center justify-center bg-black/50">
-                                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
-                                            </div>
-                                        ) : avatarUrl ? (
-                                            <img src={avatarUrl} alt="Avatar Preview" className="w-full h-full object-cover" />
-                                        ) : (
-                                            <div className="w-full h-full flex items-center justify-center text-gray-400">
-                                                <UserIcon size={40} />
-                                            </div>
-                                        )}
+                                    {(() => {
+                                        const titleConfig = getTitleConfig(userProfile?.title);
+                                        return (
+                                            <div className={`w-24 h-24 rounded-full overflow-hidden border-4 ${titleConfig.borderColor} bg-gray-700 relative`}>
+                                                {isUploading ? (
+                                                    <div className="w-full h-full flex items-center justify-center bg-black/50">
+                                                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                                                    </div>
+                                                ) : avatarUrl ? (
+                                                    <img src={avatarUrl} alt="Avatar Preview" className="w-full h-full object-cover" />
+                                                ) : (
+                                                    <div className="w-full h-full flex items-center justify-center text-gray-400">
+                                                        <UserIcon size={40} />
+                                                    </div>
+                                                )}
 
-                                        {/* Hover Overlay */}
-                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                                            <Camera className="text-white" size={24} />
-                                        </div>
-                                    </div>
+                                                {/* Hover Overlay */}
+                                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                                                    <Camera className="text-white" size={24} />
+                                                </div>
+                                            </div>
+                                        );
+                                    })()}
                                 </label>
                                 <input
                                     id="avatar-upload"
