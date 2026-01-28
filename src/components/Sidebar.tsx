@@ -113,15 +113,20 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
                     className="relative cursor-pointer group shrink-0"
                     title="Edit Profile"
                 >
-                    <div className={`${isOpen ? 'w-20 h-20' : 'w-10 h-10'} rounded-full overflow-hidden bg-gray-700 border-2 border-purple-500 transition-all duration-300 shadow-lg shadow-purple-900/20`}>
-                        {userProfile?.avatar_url ? (
-                            <img src={userProfile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
-                        ) : (
-                            <div className="w-full h-full flex items-center justify-center text-gray-400">
-                                <UserIcon size={isOpen ? 36 : 20} />
+                    {(() => {
+                        const titleConfig = getTitleConfig(userProfile?.title);
+                        return (
+                            <div className={`${isOpen ? 'w-20 h-20' : 'w-10 h-10'} rounded-full overflow-hidden bg-gray-700 border-2 ${titleConfig.borderColor} transition-all duration-300 shadow-lg shadow-purple-900/20`}>
+                                {userProfile?.avatar_url ? (
+                                    <img src={userProfile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center text-gray-400">
+                                        <UserIcon size={isOpen ? 36 : 20} />
+                                    </div>
+                                )}
                             </div>
-                        )}
-                    </div>
+                        );
+                    })()}
 
                     {/* Hover Edit Overlay */}
                     <div className="absolute inset-0 bg-black/60 rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity backdrop-blur-[1px]">
