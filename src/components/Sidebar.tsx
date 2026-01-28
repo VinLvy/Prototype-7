@@ -116,7 +116,7 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
                     {(() => {
                         const titleConfig = getTitleConfig(userProfile?.title);
                         return (
-                            <div className={`${isOpen ? 'w-20 h-20' : 'w-10 h-10'} rounded-full overflow-hidden bg-gray-700 border-2 ${titleConfig.borderColor} transition-all duration-300 shadow-lg shadow-purple-900/20`}>
+                            <div className={`${isOpen ? 'w-20 h-20' : 'w-10 h-10'} rounded-full overflow-hidden bg-gray-700 border-3 ${titleConfig.borderColor} transition-all duration-300 shadow-lg shadow-purple-900/20`}>
                                 {userProfile?.avatar_url ? (
                                     <img src={userProfile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
                                 ) : (
