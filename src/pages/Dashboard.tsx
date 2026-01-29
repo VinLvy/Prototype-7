@@ -138,17 +138,20 @@ export default function Dashboard() {
     const progressPercent = Math.min(100, Math.max(0, (currentExp / xpNeeded) * 100));
 
     return (
-        <div className="text-white p-4 md:p-8 relative">
+        <div className="text-white p-6 md:p-10 relative">
             <LevelUpCelebration show={showCelebration} onClose={() => setShowCelebration(false)} />
 
-            <header className="mb-8 flex justify-between items-center">
-                <h1 className="text-2xl md:text-3xl font-bold text-purple-400">ReLife RPG Dashboard</h1>
+            <header className="mb-8 flex justify-between items-end backdrop-blur-sm bg-slate-900/30 p-4 rounded-xl border border-white/5">
+                <div>
+                    <h1 className="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 drop-shadow-sm">ReLife Dashboard</h1>
+                    <p className="text-slate-400 text-sm font-medium mt-1">Welcome back, Traveler.</p>
+                </div>
                 <div className="text-right">
                     <p className="text-sm text-gray-400 font-bold mb-1">Level {level}</p>
                     {skillPoints > 0 && <p className="text-xs text-yellow-400 font-bold mb-1 animate-pulse">Skill Points: {skillPoints}</p>}
-                    <div className="w-48 h-4 bg-gray-700 rounded-full overflow-hidden border border-gray-600 relative group">
+                    <div className="w-56 h-5 bg-slate-800/80 rounded-full overflow-hidden border border-white/10 relative group shadow-inner">
                         <div
-                            className="bg-gradient-to-r from-green-400 to-green-600 h-full transition-all duration-500 ease-out"
+                            className="bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 h-full transition-all duration-700 ease-out animate-gradient-x"
                             style={{ width: `${progressPercent}%` }}
                         ></div>
                         <p className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-white drop-shadow-md">
@@ -160,7 +163,7 @@ export default function Dashboard() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* Stats Section */}
-                <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
+                <div className="bg-slate-900/40 backdrop-blur-md p-8 rounded-3xl border border-white/10 shadow-xl transition-all hover:shadow-2xl hover:bg-slate-900/50">
                     <h2 className="text-xl font-semibold mb-4">Current Stats</h2>
                     <HexagonChart
                         data={data}
@@ -170,16 +173,16 @@ export default function Dashboard() {
                 </div>
 
                 {/* Journal / AI Section */}
-                <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
+                <div className="bg-slate-900/40 backdrop-blur-md p-8 rounded-3xl border border-white/10 shadow-xl transition-all hover:shadow-2xl hover:bg-slate-900/50">
                     <h2 className="text-xl font-semibold mb-4">Daily Journal</h2>
                     <textarea
-                        className="w-full h-32 bg-gray-700 p-3 rounded text-white mb-4 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        className="w-full h-40 bg-slate-950/50 backdrop-blur-sm p-4 rounded-xl text-white mb-4 border border-white/10 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all placeholder:text-slate-500 resize-none"
                         placeholder="What did you achieve today?"
                         value={prompt}
                         onChange={(e) => setPrompt(e.target.value)}
                     />
                     <button
-                        className="bg-purple-600 px-6 py-2 rounded font-bold hover:bg-purple-500 transition w-full"
+                        className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white px-8 py-3 rounded-xl font-bold transition-all w-full shadow-lg shadow-purple-900/20 active:scale-[0.98]"
                         onClick={handleGenerate}
                         disabled={loading}
                     >
@@ -187,8 +190,11 @@ export default function Dashboard() {
                     </button>
 
                     {geminiResponse && (
-                        <div className="mt-4 p-4 bg-gray-700 rounded border border-gray-600">
-                            <h3 className="font-bold mb-2 text-purple-300">AI Analysis:</h3>
+                        <div className="mt-6 p-6 bg-slate-950/60 rounded-xl border border-white/10 shadow-inner">
+                            <h3 className="font-bold mb-3 text-purple-300 flex items-center gap-2">
+                                <span className="inline-block w-2 h-2 rounded-full bg-purple-400 animate-pulse" />
+                                AI Analysis:
+                            </h3>
                             <pre className="text-sm whitespace-pre-wrap overflow-auto">{geminiResponse}</pre>
                         </div>
                     )}
