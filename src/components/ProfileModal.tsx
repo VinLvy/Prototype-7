@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Save, User as UserIcon, Camera } from 'lucide-react';
 import type { UserProfile } from '../lib/db';
 import { uploadAvatar } from '../lib/storage';
@@ -89,7 +90,7 @@ export default function ProfileModal({ isOpen, onClose, userProfile, onUpdate }:
         }
     };
 
-    return (
+    return createPortal(
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
             <div className="bg-slate-900/90 backdrop-blur-xl border border-white/10 rounded-2xl w-full max-w-md p-6 shadow-2xl relative animate-in fade-in zoom-in duration-200">
                 <button
@@ -196,6 +197,7 @@ export default function ProfileModal({ isOpen, onClose, userProfile, onUpdate }:
                     </form>
                 )}
             </div>
-        </div>
+        </div>,
+        document.body
     );
 }
