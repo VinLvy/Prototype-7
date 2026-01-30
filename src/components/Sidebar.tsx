@@ -91,11 +91,11 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
 
     return (
         <div
-            className={`bg-gray-800 text-white h-screen transition-all duration-300 flex flex-col border-r border-gray-700 ${isOpen ? 'w-55' : 'w-20'
+            className={`h-screen transition-all duration-300 flex flex-col border-r border-white/10 bg-slate-900/40 backdrop-blur-xl ${isOpen ? 'w-55' : 'w-20'
                 }`}
         >
             {/* Header / Toggle */}
-            <div className="p-4 flex items-center justify-between h-16 border-b border-gray-700 shrink-0">
+            <div className="p-4 flex items-center justify-between h-16 border-b border-white/10 shrink-0">
                 {isOpen && <h1 className="text-xl font-bold text-purple-400 truncate">ReLife RPG</h1>}
                 <button
                     onClick={toggleSidebar}
@@ -107,7 +107,7 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
             </div>
 
             {/* Profile Section */}
-            <div className={`flex flex-col items-center py-3 mt-4 border-b border-gray-700 transition-all duration-300 ${isOpen ? 'px-4' : 'px-2'}`}>
+            <div className={`flex flex-col items-center py-3 mt-4 border-b border-white/10 transition-all duration-300 ${isOpen ? 'px-4' : 'px-2'}`}>
                 <div
                     onClick={() => setProfileModalOpen(true)}
                     className="relative cursor-pointer group shrink-0"
@@ -211,7 +211,7 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
             </nav>
 
             {/* Footer / Logout */}
-            <div className="p-4 border-t border-gray-700">
+            <div className="p-4 border-t border-white/10">
                 <button
                     onClick={handleLogout}
                     className="flex items-center w-full px-4 py-2 text-red-400 hover:bg-gray-700 hover:text-red-300 rounded-lg transition-colors"
