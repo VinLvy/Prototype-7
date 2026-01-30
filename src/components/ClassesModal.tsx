@@ -1,4 +1,5 @@
 import { X, Lock, Check } from 'lucide-react';
+import { createPortal } from 'react-dom';
 import { CLASSES, type CharacterClass } from '../lib/classes';
 import { type UserStats } from '../lib/db';
 
@@ -16,7 +17,7 @@ export default function ClassesModal({ isOpen, onClose, userStats, currentClassI
     // Default to 'novice' if no class is set
     const activeClassId = currentClassId || 'novice';
 
-    return (
+    return createPortal(
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fadeIn">
             <div className="bg-slate-900/90 backdrop-blur-xl rounded-2xl shadow-2xl w-full max-w-4xl border border-white/10 overflow-hidden relative animate-scaleIn flex flex-col max-h-[85vh]">
                 {/* Header */}
@@ -117,6 +118,7 @@ export default function ClassesModal({ isOpen, onClose, userStats, currentClassI
                     })}
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 }

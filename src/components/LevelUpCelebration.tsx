@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import Confetti from 'react-confetti';
 
 export default function LevelUpCelebration({ show, onClose }: { show: boolean; onClose: () => void }) {
@@ -24,7 +25,7 @@ export default function LevelUpCelebration({ show, onClose }: { show: boolean; o
 
     if (!show) return null;
 
-    return (
+    return createPortal(
         <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center">
             <Confetti
                 width={dimensions.width}
@@ -37,6 +38,7 @@ export default function LevelUpCelebration({ show, onClose }: { show: boolean; o
                 style={{ textShadow: '0 0 10px rgba(255, 215, 0, 0.8)' }}>
                 LEVEL UP!
             </div>
-        </div>
+        </div>,
+        document.body
     );
 }
