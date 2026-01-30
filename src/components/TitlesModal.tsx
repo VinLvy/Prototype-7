@@ -30,9 +30,9 @@ export default function TitlesModal({ isOpen, onClose, userStats, currentTitleId
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fadeIn">
-            <div className="bg-gray-800 rounded-2xl shadow-2xl w-full max-w-4xl border border-gray-700 overflow-hidden relative animate-scaleIn flex flex-col max-h-[85vh]">
+            <div className="bg-slate-900/90 backdrop-blur-xl rounded-2xl shadow-2xl w-full max-w-4xl border border-white/10 overflow-hidden relative animate-scaleIn flex flex-col max-h-[85vh]">
                 {/* Header */}
-                <div className="flex justify-between items-center p-6 border-b border-gray-700 bg-gray-900/50 shrink-0">
+                <div className="flex justify-between items-center p-6 border-b border-white/10 bg-slate-900/50 shrink-0">
                     <div>
                         <h2 className="text-xl font-bold text-white">Titles</h2>
                         <p className="text-sm text-gray-400">Unlock prestige titles by increasing your stats.</p>
