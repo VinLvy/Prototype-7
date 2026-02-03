@@ -26,22 +26,36 @@ export const uploadAvatar = async (file: File): Promise<string | null> => {
     }
 };
 
+
 export const deleteAvatarFromUrl = async (url: string) => {
     try {
-        // Extract file path from URL
-        // Assumes URL format: .../avatars/filename
-        const parts = url.split('/avatars/');
-        if (parts.length < 2) return;
-        const filePath = parts[1];
+        const urlObj = new URL(url);
+        // Supabase public URL structure: .../storage/v1/object/public/bucketName/filePath
+        // We need 'filePath'. 
+        // Strategy: match after the bucket name 'avatars'
+        const parts = urlObj.pathname.split('/avatars/');
 
-        const { error } = await supabase.storage
+        if (parts.length < 2) {
+            console.warn('Could not extract file path from URL:', url);
+            return;
+        }
+
+        // Parts[1] is the file path. Decode it just in case.
+        const filePath = decodeURIComponent(parts[1]);
+
+        console.log('Attempting to delete file from storage:', filePath);
+
+        const { data, error } = await supabase.storage
             .from('avatars')
             .remove([filePath]);
 
         if (error) {
             console.error('Error deleting old avatar:', error);
+        } else {
+            console.log('Successfully deleted old avatar:', data);
         }
     } catch (error) {
         console.error('Error in deleteAvatarFromUrl:', error);
     }
 };
+
