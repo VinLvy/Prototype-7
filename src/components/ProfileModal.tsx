@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Save, User as UserIcon, Camera } from 'lucide-react';
 import type { UserProfile } from '../lib/db';
-import { uploadAvatar } from '../lib/storage';
+import { uploadAvatar, deleteAvatarFromUrl } from '../lib/storage';
 import ImageCropper from './ImageCropper';
 import { getTitleConfig } from '../lib/titles';
 
@@ -58,6 +58,12 @@ export default function ProfileModal({ isOpen, onClose, userProfile, onUpdate }:
 
             const uploadedUrl = await uploadAvatar(file);
             if (uploadedUrl) {
+                // If we have a previous avatar URL that is NOT the saved user profile avatar, 
+                // it means it's an intermediate upload we can safely delete.
+                if (avatarUrl && avatarUrl !== userProfile?.avatar_url) {
+                    await deleteAvatarFromUrl(avatarUrl);
+                }
+
                 setAvatarUrl(uploadedUrl);
                 setSelectedImage(null); // Return to form
             } else {
@@ -81,6 +87,12 @@ export default function ProfileModal({ isOpen, onClose, userProfile, onUpdate }:
         setIsLoading(true);
         try {
             await onUpdate({ username, avatar_url: avatarUrl });
+
+            // If update successful, checks if we replaced an existing avatar and delete the old one
+            if (userProfile?.avatar_url && userProfile.avatar_url !== avatarUrl) {
+                await deleteAvatarFromUrl(userProfile.avatar_url);
+            }
+
             onClose();
         } catch (error) {
             console.error(error);
