@@ -144,7 +144,7 @@ export default function Dashboard() {
             <header className="mb-8 flex justify-between items-end backdrop-blur-sm bg-slate-900/30 p-4 rounded-xl border border-white/5">
                 <div>
                     <h1 className="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 drop-shadow-sm">ReLife Dashboard</h1>
-                    <p className="text-slate-400 text-sm font-medium mt-1">Welcome back, Traveler.</p>
+                    <p className="text-slate-400 text-sm font-medium mt-1">Getting Things Done.</p>
                 </div>
                 <div className="text-right">
                     <p className="text-sm text-gray-400 font-bold mb-1">Level {level}</p>
