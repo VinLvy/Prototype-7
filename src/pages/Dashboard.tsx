@@ -151,7 +151,7 @@ export default function Dashboard() {
                     {skillPoints > 0 && <p className="text-xs text-yellow-400 font-bold mb-1 animate-pulse">Skill Points: {skillPoints}</p>}
                     <div className="w-56 h-5 bg-slate-800/80 rounded-full overflow-hidden border border-white/10 relative group shadow-inner">
                         <div
-                            className="bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 h-full transition-all duration-700 ease-out animate-gradient-x"
+                            className="bg-gradient-to-r from-purple-600 via-red-600 to-purple-600 h-full transition-all duration-700 ease-out animate-gradient-x"
                             style={{ width: `${progressPercent}%` }}
                         ></div>
                         <p className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-white drop-shadow-md">
