@@ -40,7 +40,7 @@ const CustomTick = ({ payload, x, y, cx, cy, skillPoints, onIncreaseStat }: any)
                 dy={4}
                 textAnchor="middle"
                 fill="#22d3ee" // Cyan-400
-                fontSize={13}
+                fontSize={18}
                 fontWeight="bold"
                 style={{ textShadow: '0 0 10px rgba(34, 211, 238, 0.5)' }}
             >
