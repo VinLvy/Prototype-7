@@ -25,3 +25,23 @@ export const uploadAvatar = async (file: File): Promise<string | null> => {
         return null;
     }
 };
+
+export const deleteAvatarFromUrl = async (url: string) => {
+    try {
+        // Extract file path from URL
+        // Assumes URL format: .../avatars/filename
+        const parts = url.split('/avatars/');
+        if (parts.length < 2) return;
+        const filePath = parts[1];
+
+        const { error } = await supabase.storage
+            .from('avatars')
+            .remove([filePath]);
+
+        if (error) {
+            console.error('Error deleting old avatar:', error);
+        }
+    } catch (error) {
+        console.error('Error in deleteAvatarFromUrl:', error);
+    }
+};
