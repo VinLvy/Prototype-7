@@ -6,6 +6,7 @@ import {
     PolarAngleAxis,
     PolarRadiusAxis,
     ResponsiveContainer,
+    Tooltip,
 } from 'recharts';
 
 interface HexagonChartProps {
@@ -76,6 +77,31 @@ const CustomTick = ({ payload, x, y, cx, cy, skillPoints, onIncreaseStat }: any)
     );
 };
 
+const CustomTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+        const data = payload[0].payload;
+        return (
+            <div className="bg-slate-950/90 border border-cyan-500/30 p-4 rounded-xl backdrop-blur-md shadow-[0_0_15px_rgba(34,211,238,0.15)] min-w-[120px]">
+                <p className="text-cyan-400 font-bold text-lg mb-1 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]"></span>
+                    {data.subject}
+                </p>
+                <div className="flex items-center justify-between gap-4">
+                    <span className="text-slate-400 text-sm">Level</span>
+                    <span className="text-white font-mono font-bold text-base">{data.A}</span>
+                </div>
+                <div className="mt-2 w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                    <div
+                        className="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full"
+                        style={{ width: `${Math.min(100, (data.A / 100) * 100)}%` }}
+                    />
+                </div>
+            </div>
+        );
+    }
+    return null;
+};
+
 const HexagonChart: React.FC<HexagonChartProps> = ({ data, skillPoints = 0, onIncreaseStat }) => {
     return (
         <div className="rounded-2xl border border-white/5 bg-transparent shadow-none" style={{ width: '100%', height: 500, position: 'relative' }}>
@@ -106,6 +132,7 @@ const HexagonChart: React.FC<HexagonChartProps> = ({ data, skillPoints = 0, onIn
                         )}
                     />
                     <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
+                    <Tooltip content={<CustomTooltip />} cursor={{ fill: 'transparent' }} />
                     <Radar
                         name="Stats"
                         dataKey="A"
