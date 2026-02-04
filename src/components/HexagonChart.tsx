@@ -87,7 +87,7 @@ const CustomTooltip = ({ active, payload }: any) => {
                     {data.subject}
                 </p>
                 <div className="flex items-center justify-between gap-4">
-                    <span className="text-slate-400 text-sm">Level</span>
+                    <span className="text-slate-400 text-sm">Stat Points</span>
                     <span className="text-white font-mono font-bold text-base">{data.A}</span>
                 </div>
                 <div className="mt-2 w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
