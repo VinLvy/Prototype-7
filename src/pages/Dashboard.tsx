@@ -147,7 +147,7 @@ export default function Dashboard() {
                     <p className="text-slate-400 text-sm font-medium mt-1">Getting Things Done.</p>
                 </div>
                 <div className="text-right">
-                    <p className="text-sm text-gray-400 font-bold mb-1">Level {level}</p>
+                    <p className="text-sm text-red-500 font-bold mb-1">Level {level}</p>
                     {skillPoints > 0 && <p className="text-xs text-yellow-400 font-bold mb-1 animate-pulse">Skill Points: {skillPoints}</p>}
                     <div className="w-56 h-5 bg-slate-800/80 rounded-full overflow-hidden border border-white/10 relative group shadow-inner">
                         <div
