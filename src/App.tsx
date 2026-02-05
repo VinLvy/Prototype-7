@@ -7,7 +7,7 @@ import Settings from './pages/Settings';
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
-import AuroraBackground from './components/AuroraBackground';
+import AuroraBackground from './components/ModernBackground';
 
 function App() {
   return (
