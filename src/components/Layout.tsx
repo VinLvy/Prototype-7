@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
-import AuroraBackground from './AuroraBackground';
+import ModernBackground from './ModernBackground';
 
 export default function Layout() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -13,7 +13,7 @@ export default function Layout() {
     return (
         <div className="flex h-screen bg-transparent overflow-hidden relative">
             <div className="absolute inset-0 z-[-1]">
-                <AuroraBackground />
+                <ModernBackground />
             </div>
             <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
             <div className="flex-1 overflow-auto relative transition-all duration-300">
