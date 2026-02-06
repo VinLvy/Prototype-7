@@ -14,6 +14,7 @@ interface HexagonChartProps {
         subject: string;
         A: number;
         fullMark: number;
+        fullName?: string;
     }[];
     skillPoints?: number;
     onIncreaseStat?: (stat: string) => void;
@@ -84,7 +85,7 @@ const CustomTooltip = ({ active, payload }: any) => {
             <div className="bg-slate-950/90 border border-cyan-500/30 p-4 rounded-xl backdrop-blur-md shadow-[0_0_15px_rgba(34,211,238,0.15)] min-w-[120px]">
                 <p className="text-cyan-400 font-bold text-lg mb-1 flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]"></span>
-                    {data.subject}
+                    {data.fullName || data.subject}
                 </p>
                 <div className="flex items-center justify-between gap-4">
                     <span className="text-slate-400 text-sm">Stat Points</span>
