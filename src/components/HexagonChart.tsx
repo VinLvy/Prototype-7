@@ -83,17 +83,17 @@ const CustomTooltip = ({ active, payload }: any) => {
         const data = payload[0].payload;
         return (
             <div className="bg-slate-950/90 border border-cyan-500/30 p-4 rounded-xl backdrop-blur-md shadow-[0_0_15px_rgba(34,211,238,0.15)] min-w-[120px]">
-                <p className="text-cyan-400 font-bold text-lg mb-1 flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]"></span>
+                <p className="text-purple-500 font-bold text-lg mb-1 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-pink-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]"></span>
                     {data.fullName || data.subject}
                 </p>
                 <div className="flex items-center justify-between gap-4">
-                    <span className="text-slate-400 text-sm">Stat Points</span>
-                    <span className="text-white font-mono font-bold text-base">{data.A}</span>
+                    <span className="text-cyan-400 text-sm">Stat Points</span>
+                    <span className="text-blue-500 font-mono font-bold text-base">{data.A}</span>
                 </div>
                 <div className="mt-2 w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
                     <div
-                        className="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full"
+                        className="h-full bg-gradient-to-r from-pink-500 to-purple-500 rounded-full"
                         style={{ width: `${Math.min(100, (data.A / 100) * 100)}%` }}
                     />
                 </div>
