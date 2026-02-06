@@ -110,8 +110,8 @@ const HexagonChart: React.FC<HexagonChartProps> = ({ data, skillPoints = 0, onIn
                 <RadarChart cx="50%" cy="50%" outerRadius="70%" data={data}>
                     <defs>
                         <linearGradient id="cyberGradient" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#00f2ff" stopOpacity={0.8} />
-                            <stop offset="95%" stopColor="#bc13fe" stopOpacity={0.4} />
+                            <stop offset="5%" stopColor="#ff5100ff" stopOpacity={0.8} />
+                            <stop offset="95%" stopColor="#fe133ee1" stopOpacity={0.4} />
                         </linearGradient>
                         <filter id="glow">
                             <feGaussianBlur stdDeviation="2.5" result="coloredBlur" />
@@ -137,7 +137,7 @@ const HexagonChart: React.FC<HexagonChartProps> = ({ data, skillPoints = 0, onIn
                     <Radar
                         name="Stats"
                         dataKey="A"
-                        stroke="#00f2ff"
+                        stroke="#ff000023"
                         strokeWidth={3}
                         fill="url(#cyberGradient)"
                         fillOpacity={0.6}
