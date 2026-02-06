@@ -1,73 +1,82 @@
-# React + TypeScript + Vite
+ADD STARTING PROMPT, USER TELLS US WHO IS HE, SO THE STAT WON'T START FROM 0
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# ReLife RPG (Prototype-7)
 
-Currently, two official plugins are available:
+ReLife RPG is a gamified life-tracking application that transforms your daily activities and achievements into RPG statistics. By logging your daily progress, the integrated **Google Gemini AI** analyzes your entries and awards you experience points (XP) and stat increases across six core attributes: **Strength**, **Intelligence**, **Charisma**, **Creativity**, **Wisdom**, and **Wealth**.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+![ReLife RPG Dashboard](https://via.placeholder.com/800x450?text=ReLife+RPG+Dashboard+Preview)
 
-## React Compiler
+## 🚀 Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+*   **AI-Powered Journaling**: Simply write about your day, and Gemini AI analyzes your actions to determine which stats improve.
+*   **Hexagon Stat System**: Visualize your personal growth with a dynamic Radar Chart showing your balance across 6 key attributes.
+*   **Leveling System**: Gain XP, level up, and earn **Skill Points** to manually allocate to your desired stats.
+*   **Gamified Progression**: Unlock unique **Titles** and **Character Classes** based on your stat distribution (e.g., reaching high Intelligence unlocks the "Sage" title).
+*   **Modern Cyberpunk UI**: A sleek, dark-mode interface featuring glassmorphism, smooth animations (Framer Motion), and responsive design.
+*   **Profile Management**: Customize your profile with a cropped avatar, username, and selectable titles.
+*   **Secure Authentication**: User management powered by Supabase.
 
-## Expanding the ESLint configuration
+## 🛠️ Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Frontend
+*   **Framework**: [React](https://react.dev/) (with [Vite](https://vitejs.dev/))
+*   **Language**: [TypeScript](https://www.typescriptlang.org/)
+*   **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+*   **Animations**: [Framer Motion](https://www.framer.com/motion/)
+*   **Charts**: [Recharts](https://recharts.org/)
+*   **Icons**: [Lucide React](https://lucide.dev/)
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Backend & Infrastructure
+*   **Database & Auth**: [Supabase](https://supabase.com/) (PostgreSQL)
+*   **AI Model**: [Google Gemini API](https://ai.google.dev/) (`gemini-2.5-flash`)
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## 📦 Installation & Setup
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+1.  **Clone the repository**
+    ```bash
+    git clone https://github.com/your-username/prototype-7.git
+    cd prototype-7
+    ```
+
+2.  **Install dependencies**
+    ```bash
+    npm install
+    ```
+
+3.  **Environment Configuration**
+    Create a `.env` file in the root directory and add your Supabase and Gemini credentials:
+    ```env
+    VITE_SUPABASE_URL=your_supabase_url
+    VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+    VITE_GEMINI_API_KEY=your_gemini_api_key
+    ```
+
+4.  **Run the development server**
+    ```bash
+    npm run dev
+    ```
+
+## 📂 Project Structure
+
+```text
+src/
+├── components/       # Reusable UI components (HexagonChart, LevelUpCelebration, etc.)
+├── lib/              # Core logic and configuration
+│   ├── db.ts         # User stats and database operations
+│   ├── gemini.ts     # AI analysis and API interaction
+│   └── supabase.ts   # Supabase client setup
+├── pages/            # Main application views (Dashboard, Login, Signup)
+└── App.tsx           # Main application entry and routing
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🎮 How It Works
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+1.  **Log In**: creating an account via Supabase.
+2.  **Dashboard**: You are greeted with your current level, XP progress, and stat chart.
+3.  **Journal Entry**: Type what you did today (e.g., "Went to the gym for 2 hours and read a book about finance").
+4.  **AI Analysis**: The system sends your entry to Gemini, which determines that you gained **Strength** (Gym) and **Intelligence/Wealth** (Finance book).
+5.  **Growth**: Watch your stats rise, your level increase, and unlock new possibilities!
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## 📜 License
+
+This project is licensed under the MIT License.
