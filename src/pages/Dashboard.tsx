@@ -19,12 +19,12 @@ const formatStatsForChart = (stats: UserStats | null) => {
     };
 
     return [
-        { subject: 'STR', A: s.strength, fullMark: 100 },
-        { subject: 'INT', A: s.intelligence, fullMark: 100 },
-        { subject: 'CHA', A: s.charisma, fullMark: 100 },
-        { subject: 'CRE', A: s.creativity, fullMark: 100 },
-        { subject: 'WIS', A: s.wisdom, fullMark: 100 },
-        { subject: 'WEA', A: s.wealth, fullMark: 100 },
+        { subject: 'STR', A: s.strength, fullMark: 100, fullName: 'Strength' },
+        { subject: 'INT', A: s.intelligence, fullMark: 100, fullName: 'Intelligence' },
+        { subject: 'CHA', A: s.charisma, fullMark: 100, fullName: 'Charisma' },
+        { subject: 'CRE', A: s.creativity, fullMark: 100, fullName: 'Creativity' },
+        { subject: 'WIS', A: s.wisdom, fullMark: 100, fullName: 'Wisdom' },
+        { subject: 'WEA', A: s.wealth, fullMark: 100, fullName: 'Wealth' },
     ];
 };
 
