@@ -4,6 +4,7 @@ import SignUp from './pages/SignUp';
 import Dashboard from './pages/Dashboard';
 import History from './pages/History';
 import Settings from './pages/Settings';
+import OriginStory from './pages/OriginStory';
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
@@ -23,6 +24,7 @@ function App() {
 
           {/* Protected Routes wrapped in Layout (Sidebar) */}
           <Route element={<ProtectedRoute />}>
+            <Route path="/origin" element={<OriginStory />} />
             <Route element={<Layout />}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/history" element={<History />} />
