@@ -60,3 +60,58 @@ Provide the response ONLY in JSON format: { "summary": "Short RPG-style summary 
     throw error;
   }
 };
+
+export interface OriginStoryAnalysis {
+  summary: string;
+  initial_stats: {
+    STR: number;
+    INT: number;
+    CHA: number;
+    CRE: number;
+    WIS: number;
+    WEA: number;
+  };
+  recommended_class: string;
+}
+
+export const analyzeOriginStory = async (story: string): Promise<OriginStoryAnalysis> => {
+  try {
+    const systemPrompt = `
+You are an RPG Game Master. A new player is joining the world and telling you their "Origin Story" (who they were before).
+Your task is to analyze their story and assign INITIAL STATS (0-100) for these 6 attributes: STR, INT, CHA, CRE, WIS, WEA.
+
+- The average human is around 10-20.
+- Exceptionally skilled people might be 30-50.
+- Legends might be 60+.
+- Be fair but generous where their story justifies it.
+- Also recommend a starting "Character Class" that fits their story (e.g., "Scholar", "Rogue", "Merchant", "Warrior", "Artist").
+
+Provide the response ONLY in JSON format:
+{
+  "summary": "A brief, immersive comment on their past.",
+  "initial_stats": { "STR": 10, "INT": 10, "CHA": 10, "CRE": 10, "WIS": 10, "WEA": 10 },
+  "recommended_class": "Class Name"
+}
+`;
+
+    const fullPrompt = `${systemPrompt} \n\nOrigin Story: "${story}"`;
+
+    const response = await geminiClient.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: fullPrompt,
+      config: {
+        responseMimeType: "application/json",
+      }
+    });
+
+    const text = response.text;
+    const cleanText = text?.replace(/```json/g, "").replace(/```/g, "").trim();
+
+    if (!cleanText) throw new Error("No response from Gemini");
+
+    return JSON.parse(cleanText) as OriginStoryAnalysis;
+  } catch (error) {
+    console.error("Error analyzing origin story:", error);
+    throw error;
+  }
+};
