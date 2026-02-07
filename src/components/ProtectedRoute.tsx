@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import supabase from '../lib/supabase';
-import { getUserStats } from '../lib/db';
+import { getUserProfile } from '../lib/db';
 import type { Session } from '@supabase/supabase-js';
 
 export default function ProtectedRoute() {
@@ -14,14 +14,23 @@ export default function ProtectedRoute() {
 
         const checkUserStatus = async (session: Session | null) => {
             if (session && !session.user.user_metadata?.onboarding_complete) {
-                // Check if user has stats (legacy user)
-                const stats = await getUserStats(session.user.id);
-                if (stats) {
+                // Check if user has "Legacy Progress"
+                // A user is "Legacy" if they have Level > 1 OR XP > 0 OR Skill Points > 0
+                // If they are Level 1, 0 XP, 0 SP -> They are effectively "New" (or reset), so we send them to Origin.
+                const profile = await getUserProfile(session.user.id);
+
+                const isLegacy = profile && (
+                    (profile.level && profile.level > 1) ||
+                    (profile.current_exp && profile.current_exp > 0) ||
+                    (profile.skill_points && profile.skill_points > 0)
+                );
+
+                if (isLegacy) {
                     // Update metadata for future
                     await supabase.auth.updateUser({
                         data: { onboarding_complete: true }
                     });
-                    // Update local session
+                    // Update local session to reflect this immediately
                     session.user.user_metadata = {
                         ...session.user.user_metadata,
                         onboarding_complete: true
