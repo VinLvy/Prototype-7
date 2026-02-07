@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import supabase from '../lib/supabase';
+import { getUserStats } from '../lib/db';
 import type { Session } from '@supabase/supabase-js';
 
 export default function ProtectedRoute() {
@@ -9,21 +10,53 @@ export default function ProtectedRoute() {
     const location = useLocation();
 
     useEffect(() => {
-        // Initial session check
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setSession(session);
-            setLoading(false);
+        let mounted = true;
+
+        const checkUserStatus = async (session: Session | null) => {
+            if (session && !session.user.user_metadata?.onboarding_complete) {
+                // Check if user has stats (legacy user)
+                const stats = await getUserStats(session.user.id);
+                if (stats) {
+                    // Update metadata for future
+                    await supabase.auth.updateUser({
+                        data: { onboarding_complete: true }
+                    });
+                    // Update local session
+                    session.user.user_metadata = {
+                        ...session.user.user_metadata,
+                        onboarding_complete: true
+                    };
+                }
+            }
+            return session;
+        };
+
+        const init = async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            const updatedSession = await checkUserStatus(session);
+            if (mounted) {
+                setSession(updatedSession);
+                setLoading(false);
+            }
+        };
+
+        init();
+
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+            // We need to verify status on login as well
+            if (session) {
+                await checkUserStatus(session);
+            }
+            if (mounted) {
+                setSession(session);
+                setLoading(false);
+            }
         });
 
-        // Listen for auth changes
-        const {
-            data: { subscription },
-        } = supabase.auth.onAuthStateChange((_event, session) => {
-            setSession(session);
-            setLoading(false);
-        });
-
-        return () => subscription.unsubscribe();
+        return () => {
+            mounted = false;
+            subscription.unsubscribe();
+        };
     }, []);
 
     if (loading) {
