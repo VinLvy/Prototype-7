@@ -264,3 +264,50 @@ export const getActivityLogs = async (userId: string) => {
     }
     return data;
 };
+
+export const saveInitialStats = async (userId: string, stats: { [key: string]: number }) => {
+    // Map keys to DB columns
+    const mapKeyToColumn: { [key: string]: string } = {
+        'STR': 'strength',
+        'INT': 'intelligence',
+        'CHA': 'charisma',
+        'CRE': 'creativity',
+        'WIS': 'wisdom',
+        'WEA': 'wealth'
+    };
+
+    const newStats: any = {};
+    for (const [key, value] of Object.entries(stats)) {
+        const column = mapKeyToColumn[key];
+        if (column) {
+            newStats[column] = value;
+        }
+    }
+
+    // Upsert acts as "create or update"
+    const { error } = await supabase
+        .from('user_stats')
+        .upsert({ user_id: userId, ...newStats });
+
+    if (error) {
+        console.error("Error saving initial stats:", error);
+        throw error;
+    }
+};
+
+export const completeOnboarding = async (userId: string, characterClass: string) => {
+    // 1. Update user metadata
+    const { error: metaError } = await supabase.auth.updateUser({
+        data: { onboarding_complete: true }
+    });
+
+    if (metaError) {
+        console.error("Error updating user metadata:", metaError);
+        throw metaError;
+    }
+
+    // 2. Update character class in profile if provided
+    if (characterClass) {
+        await updateUserProfile(userId, { character_class: characterClass });
+    }
+};
