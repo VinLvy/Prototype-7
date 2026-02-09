@@ -33,20 +33,43 @@ export default function OriginStory() {
     };
 
     const handleConfirm = async () => {
-        if (!userId || !result) return;
+        if (!userId) {
+            alert("User session missing. Please try logging in again.");
+            return;
+        }
+        if (!result) return;
+
         setLoading(true);
         try {
-            // 1. Save Stats
-            await saveInitialStats(userId, result.initial_stats);
+            console.log("Starting profile save...");
 
-            // 2. Mark Onboarding as Complete & Set Class
-            await completeOnboarding(userId, result.recommended_class);
+            // Run save operations in parallel with a timeout
+            const saveParams = {
+                stats: result.initial_stats,
+                class: result.recommended_class
+            };
+
+            const saveOperation = Promise.all([
+                saveInitialStats(userId, saveParams.stats),
+                completeOnboarding(userId, saveParams.class)
+            ]);
+
+            // Add 15s timeout
+            const timeoutPromise = new Promise((_, reject) =>
+                setTimeout(() => reject(new Error("Request timed out")), 15000)
+            );
+
+            await Promise.race([saveOperation, timeoutPromise]);
+
+            console.log("Profile saved successfully. Redirecting to dashboard...");
 
             // 3. Redirect
             navigate('/dashboard');
-        } catch (error) {
-            console.error("Failed to save:", error);
-            alert("Failed to save your profile. Please try again.");
+        } catch (error: any) {
+            console.error("Failed to save profile:", error);
+            // Show more specific error if possible
+            const msg = error?.message || "Unknown error";
+            alert(`Failed to save your profile: ${msg}. Please try again.`);
         } finally {
             setLoading(false);
         }
@@ -74,10 +97,10 @@ export default function OriginStory() {
                 {!result ? (
                     // INPUT STAGE
                     <div className="bg-slate-900/50 backdrop-blur-xl p-8 md:p-12 rounded-3xl border border-white/10 shadow-2xl transition-all duration-500">
-                        <h1 className="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-4 text-center">
+                        <h1 className="text-2xl md:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-4 text-center">
                             Who were you?
                         </h1>
-                        <p className="text-slate-300 text-center mb-8 text-lg">
+                        <p className="text-slate-300 text-center mb-8 text-md">
                             Every hero has an origin. Tell us about your past life, your skills, your triumphs, and your failures.
                             The AI will determine your starting stats based on your story.
                         </p>
