@@ -110,7 +110,7 @@ const HexagonChart: React.FC<HexagonChartProps> = ({ data, skillPoints = 0, onIn
                 <RadarChart cx="50%" cy="50%" outerRadius="70%" data={data}>
                     <defs>
                         <linearGradient id="cyberGradient" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#ff5100ff" stopOpacity={0.8} />
+                            <stop offset="5%" stopColor="#ff00009a" stopOpacity={0.8} />
                             <stop offset="95%" stopColor="#fe133ee1" stopOpacity={0.4} />
                         </linearGradient>
                         <filter id="glow">
