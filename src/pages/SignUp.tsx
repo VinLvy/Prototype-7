@@ -28,7 +28,7 @@ export default function SignUp() {
             alert(error.message);
         } else {
             console.log("Sign up successful", data);
-            alert('Account created successfully! Please login to continue.');
+            alert('Account created successfully!');
             navigate('/login');
         }
         setLoading(false);
