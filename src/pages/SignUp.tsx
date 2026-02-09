@@ -24,15 +24,12 @@ export default function SignUp() {
         });
 
         if (error) {
+            console.error("Sign up error:", error);
             alert(error.message);
         } else {
             console.log("Sign up successful", data);
-            // If "Confirm Email" is disabled, data.session will be present
-            if (data.session) {
-                navigate('/dashboard');
-            } else {
-                alert('Sign up successful! Please check your email to confirm your account.');
-            }
+            alert('Account created successfully! Please login to continue.');
+            navigate('/login');
         }
         setLoading(false);
     };
