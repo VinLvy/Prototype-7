@@ -311,3 +311,63 @@ export const completeOnboarding = async (userId: string, characterClass: string)
         await updateUserProfile(userId, { character_class: characterClass });
     }
 };
+
+export const resetAccountProgress = async (userId: string) => {
+    // 1. Reset user profile
+    const { error: userError } = await supabase
+        .from('users')
+        .update({
+            level: 1,
+            current_exp: 0,
+            skill_points: 0,
+            title: null,
+            character_class: null
+        })
+        .eq('id', userId);
+
+    if (userError) {
+        console.error("Error resetting user profile:", userError);
+        throw userError;
+    }
+
+    // 2. Reset user stats
+    const { error: statsError } = await supabase
+        .from('user_stats')
+        .update({
+            strength: 0,
+            intelligence: 0,
+            charisma: 0,
+            creativity: 0,
+            wisdom: 0,
+            wealth: 0
+        })
+        .eq('user_id', userId);
+
+    if (statsError) {
+        console.error("Error resetting user stats:", statsError);
+        throw statsError;
+    }
+
+    // 3. Clear activity logs
+    const { error: logsError } = await supabase
+        .from('activity_logs')
+        .delete()
+        .eq('user_id', userId);
+
+    if (logsError) {
+        console.error("Error clearing activity logs:", logsError);
+        throw logsError;
+    }
+
+    // 4. Reset onboarding metadata
+    const { error: authError } = await supabase.auth.updateUser({
+        data: { onboarding_complete: false }
+    });
+
+    if (authError) {
+        console.error("Error resetting auth metadata:", authError);
+        throw authError;
+    }
+
+    notifyUserDataChange();
+};
