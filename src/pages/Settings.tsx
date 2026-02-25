@@ -29,12 +29,11 @@ export default function Settings() {
             setLoading(true);
             try {
                 await resetAccountProgress(userId);
-                alert("Progress reset successfully. Restarting your journey...");
+                // Redirect immediately after success
                 navigate('/origin');
             } catch (error) {
                 console.error("Failed to reset progress:", error);
                 alert("Failed to reset progress. Please try again.");
-            } finally {
                 setLoading(false);
             }
         }
