@@ -25,7 +25,14 @@ export const onUserDataChange = (listener: DataChangeListener) => {
 };
 
 const notifyUserDataChange = () => {
-    listeners.forEach(l => l());
+    listeners.forEach(l => {
+        try {
+            // Use setTimeout to make notifications non-blocking
+            setTimeout(l, 0);
+        } catch (e) {
+            console.error("Error in data change listener:", e);
+        }
+    });
 };
 
 export const saveActivityLog = async (userId: string, description: string, aiAnalysis: any) => {
@@ -368,6 +375,9 @@ export const resetAccountProgress = async (userId: string) => {
         console.error("Error resetting auth metadata:", authError);
         throw authError;
     }
+
+    // 5. Force session refresh to sync local metadata
+    await supabase.auth.refreshSession();
 
     notifyUserDataChange();
 };
