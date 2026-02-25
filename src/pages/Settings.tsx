@@ -30,7 +30,7 @@ export default function Settings() {
             try {
                 await resetAccountProgress(userId);
                 alert("Progress reset successfully. Restarting your journey...");
-                navigate('/origin-story');
+                navigate('/origin');
             } catch (error) {
                 console.error("Failed to reset progress:", error);
                 alert("Failed to reset progress. Please try again.");
