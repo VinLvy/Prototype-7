@@ -43,23 +43,12 @@ export default function OriginStory() {
         try {
             console.log("Starting profile save...");
 
-            // Run save operations in parallel with a timeout
-            const saveParams = {
-                stats: result.initial_stats,
-                class: result.recommended_class
-            };
+            // Make operations sequential for better reliability
+            // 1. Save stats
+            await saveInitialStats(userId, result.initial_stats);
 
-            const saveOperation = Promise.all([
-                saveInitialStats(userId, saveParams.stats),
-                completeOnboarding(userId, saveParams.class)
-            ]);
-
-            // Add 15s timeout
-            const timeoutPromise = new Promise((_, reject) =>
-                setTimeout(() => reject(new Error("Request timed out")), 15000)
-            );
-
-            await Promise.race([saveOperation, timeoutPromise]);
+            // 2. Complete onboarding (metadata update + character class update)
+            await completeOnboarding(userId, result.recommended_class);
 
             console.log("Profile saved successfully. Redirecting to dashboard...");
 
