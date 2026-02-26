@@ -92,6 +92,7 @@ export const getUserProfile = async (userId: string): Promise<UserProfile | null
 };
 
 export const updateUserProfile = async (userId: string, updates: Partial<UserProfile>) => {
+    console.log(`Updating profile for user ${userId}...`, updates);
     const { error } = await supabase
         .from('users')
         .update(updates)
@@ -101,6 +102,7 @@ export const updateUserProfile = async (userId: string, updates: Partial<UserPro
         console.error('Error updating user profile:', error);
         throw error;
     }
+    console.log("Profile updated successfully.");
     notifyUserDataChange();
 };
 
@@ -273,7 +275,33 @@ export const getActivityLogs = async (userId: string) => {
 };
 
 export const saveInitialStats = async (userId: string, stats: { [key: string]: number }) => {
-    // Map keys to DB columns
+    // 1. Ensure user record exists in public.users first
+    // This is a safety measure in case the auth trigger failed
+    const { data: userData, error: userFetchError } = await supabase
+        .from('users')
+        .select('id')
+        .eq('id', userId)
+        .single();
+
+    if (userFetchError || !userData) {
+        console.log("User record missing in public.users, creating it now...");
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+            const { error: insertError } = await supabase
+                .from('users')
+                .insert({
+                    id: userId,
+                    username: user.user_metadata?.full_name || 'Adventurer',
+                    avatar_url: user.user_metadata?.avatar_url || null
+                });
+            if (insertError) {
+                console.error("Failed to create missing user record:", insertError);
+                // Continue anyway, upsert might still work or error out properly
+            }
+        }
+    }
+
+    // 2. Map keys to DB columns
     const mapKeyToColumn: { [key: string]: string } = {
         'STR': 'strength',
         'INT': 'intelligence',
@@ -291,7 +319,8 @@ export const saveInitialStats = async (userId: string, stats: { [key: string]: n
         }
     }
 
-    // Upsert acts as "create or update"
+    // 3. Upsert stats
+    console.log(`Saving initial stats for user ${userId}...`);
     const { error } = await supabase
         .from('user_stats')
         .upsert({ user_id: userId, ...newStats });
@@ -300,10 +329,19 @@ export const saveInitialStats = async (userId: string, stats: { [key: string]: n
         console.error("Error saving initial stats:", error);
         throw error;
     }
+    console.log("Initial stats saved successfully.");
 };
 
 export const completeOnboarding = async (userId: string, characterClass: string) => {
-    // 1. Update user metadata
+    // 1. Update character class in profile first (database)
+    if (characterClass) {
+        console.log(`Setting character class to ${characterClass}...`);
+        await updateUserProfile(userId, { character_class: characterClass });
+    }
+
+    // 2. Update user metadata (auth)
+    // We do this last because it triggers a re-render in ProtectedRoute
+    console.log("Updating auth metadata: onboarding_complete = true");
     const { error: metaError } = await supabase.auth.updateUser({
         data: { onboarding_complete: true }
     });
@@ -312,11 +350,7 @@ export const completeOnboarding = async (userId: string, characterClass: string)
         console.error("Error updating user metadata:", metaError);
         throw metaError;
     }
-
-    // 2. Update character class in profile if provided
-    if (characterClass) {
-        await updateUserProfile(userId, { character_class: characterClass });
-    }
+    console.log("Auth metadata updated successfully.");
 };
 
 export const resetAccountProgress = async (userId: string) => {
