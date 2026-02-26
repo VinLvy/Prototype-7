@@ -111,7 +111,7 @@ export default function Settings() {
                         <button
                             type="submit"
                             disabled={passwordLoading}
-                            className="w-full md:w-auto bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg disabled:opacity-50"
+                            className="w-full md:w-auto bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-lg disabled:opacity-50"
                         >
                             {passwordLoading ? "Updating..." : "Update Password"}
                         </button>
