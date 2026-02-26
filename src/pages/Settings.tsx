@@ -8,6 +8,11 @@ export default function Settings() {
     const [userId, setUserId] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
 
+    // Change Password State
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [passwordLoading, setPasswordLoading] = useState(false);
+
     useEffect(() => {
         supabase.auth.getUser().then(({ data: { user } }) => {
             if (user) setUserId(user.id);
@@ -39,6 +44,33 @@ export default function Settings() {
         }
     };
 
+    const handleUpdatePassword = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (newPassword !== confirmPassword) {
+            alert("Passwords do not match!");
+            return;
+        }
+        if (newPassword.length < 6) {
+            alert("Password must be at least 6 characters long.");
+            return;
+        }
+
+        setPasswordLoading(true);
+        const { error } = await supabase.auth.updateUser({
+            password: newPassword
+        });
+
+        if (error) {
+            console.error("Error updating password:", error);
+            alert(`Failed to update password: ${error.message}`);
+        } else {
+            alert("Password updated successfully!");
+            setNewPassword('');
+            setConfirmPassword('');
+        }
+        setPasswordLoading(false);
+    };
+
     return (
         <div className="p-8 text-white min-h-full">
             <h1 className="text-3xl font-bold mb-6 text-purple-400">Settings</h1>
@@ -60,6 +92,48 @@ export default function Settings() {
                     >
                         {loading ? "Resetting..." : "Reset Account Progress"}
                     </button>
+                </div>
+
+                {/* Change Password Section */}
+                <div className="bg-slate-900/50 backdrop-blur-xl p-8 rounded-2xl shadow-xl border border-white/10 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 p-4 opacity-30">
+                        <div className="w-20 h-20 bg-blue-500/20 rounded-full blur-2xl"></div>
+                    </div>
+                    <h2 className="text-xl font-bold mb-4 text-blue-400 relative z-10">Security</h2>
+                    <p className="text-slate-300 mb-6 relative z-10">
+                        Update your account password.
+                    </p>
+                    <form onSubmit={handleUpdatePassword} className="space-y-4 relative z-10">
+                        <div className="flex flex-col gap-2">
+                            <label className="text-sm text-slate-400">New Password</label>
+                            <input
+                                type="password"
+                                className="p-3 rounded-xl bg-slate-950 border border-white/10 focus:border-blue-500 focus:outline-none transition-all"
+                                value={newPassword}
+                                onChange={(e) => setNewPassword(e.target.value)}
+                                placeholder="Min 6 characters"
+                                required
+                            />
+                        </div>
+                        <div className="flex flex-col gap-2">
+                            <label className="text-sm text-slate-400">Confirm New Password</label>
+                            <input
+                                type="password"
+                                className="p-3 rounded-xl bg-slate-950 border border-white/10 focus:border-blue-500 focus:outline-none transition-all"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                placeholder="Repeat new password"
+                                required
+                            />
+                        </div>
+                        <button
+                            type="submit"
+                            disabled={passwordLoading}
+                            className="w-full md:w-auto bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg disabled:opacity-50"
+                        >
+                            {passwordLoading ? "Updating..." : "Update Password"}
+                        </button>
+                    </form>
                 </div>
 
                 {/* Danger Zone Section */}
