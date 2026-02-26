@@ -34,32 +34,41 @@ export default function OriginStory() {
 
     const handleConfirm = async () => {
         if (!userId) {
+            console.error("No userId found in state!");
             alert("User session missing. Please try logging in again.");
             return;
         }
-        if (!result) return;
+        if (!result) {
+            console.error("No analysis result found!");
+            return;
+        }
 
         setLoading(true);
         try {
-            console.log("Starting profile save...");
-
-            // Make operations sequential for better reliability
+            console.log("Saving initial stats...");
             // 1. Save stats
             await saveInitialStats(userId, result.initial_stats);
+            console.log("Stats saved.");
 
+            console.log("Completing onboarding...");
             // 2. Complete onboarding (metadata update + character class update)
             await completeOnboarding(userId, result.recommended_class);
+            console.log("Onboarding completed.");
 
-            console.log("Profile saved successfully. Redirecting to dashboard...");
+            // Final safety refresh
+            await supabase.auth.refreshSession();
+            console.log("Session refreshed.");
 
+            console.log("Redirecting to dashboard...");
             // 3. Redirect
-            navigate('/dashboard');
+            navigate('/dashboard', { replace: true });
         } catch (error: any) {
-            console.error("Failed to save profile:", error);
+            console.error("Critical error saving profile:", error);
             // Show more specific error if possible
             const msg = error?.message || "Unknown error";
-            alert(`Failed to save your profile: ${msg}. Please try again.`);
+            alert(`Failed to save your profile: ${msg}. Please try again. Check console for details.`);
         } finally {
+            console.log("handleConfirm finished.");
             setLoading(false);
         }
     };
