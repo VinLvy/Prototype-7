@@ -29,10 +29,13 @@ export default function Settings() {
 
     const handleUpdateTimeout = (e: React.FormEvent) => {
         e.preventDefault();
-        localStorage.setItem('session_timeout', sessionTimeout);
-        alert("Session timeout updated successfully!");
-        // We might want to trigger a reload or some event to let AutoLogout know,
-        // but since it reads from localStorage on resetTimer, it should pick it up.
+        const timeoutValue = parseInt(sessionTimeout, 10);
+        const cappedTimeout = Math.min(timeoutValue, 15);
+
+        localStorage.setItem('session_timeout', cappedTimeout.toString());
+        setSessionTimeout(cappedTimeout.toString());
+
+        alert(`Session timeout updated successfully${cappedTimeout < timeoutValue ? ' (capped at 15 minutes)' : ''}!`);
         window.location.reload();
     };
 
@@ -142,18 +145,19 @@ export default function Settings() {
                     </div>
                     <h2 className="text-xl font-bold mb-4 text-emerald-400 relative z-10">Session Management</h2>
                     <p className="text-slate-300 mb-6 relative z-10">
-                        Automatically log out after a period of inactivity. Set to 0 to disable.
+                        Automatically log out after a period of inactivity. Set to 0 to disable (Max 15 minutes).
                     </p>
                     <form onSubmit={handleUpdateTimeout} className="space-y-4 relative z-10">
                         <div className="flex flex-col gap-2">
-                            <label className="text-sm text-slate-400">Inactivity Timeout (Minutes)</label>
+                            <label className="text-sm text-slate-400">Inactivity Timeout (Minutes, Max 15)</label>
                             <input
                                 type="number"
                                 min="0"
+                                max="15"
                                 className="p-3 rounded-xl bg-slate-950 border border-white/10 focus:border-emerald-500 focus:outline-none transition-all"
                                 value={sessionTimeout}
                                 onChange={(e) => setSessionTimeout(e.target.value)}
-                                placeholder="Default: 15"
+                                placeholder="Default: 15 (Max 15)"
                                 required
                             />
                         </div>
