@@ -1,12 +1,33 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import supabase from '../lib/supabase';
+import Notification from '../components/Notification';
+import type { NotificationType } from '../components/Notification';
 
 export default function Login() {
     const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
+
+    // Notification state
+    const [notification, setNotification] = useState<{
+        message: string;
+        type: NotificationType;
+        isVisible: boolean;
+    }>({
+        message: '',
+        type: 'info',
+        isVisible: false
+    });
+
+    const showNotification = (message: string, type: NotificationType = 'error') => {
+        setNotification({
+            message,
+            type,
+            isVisible: true
+        });
+    };
 
     useEffect(() => {
         const checkSession = async () => {
@@ -27,7 +48,16 @@ export default function Login() {
         });
 
         if (error) {
-            alert(error.message);
+            console.error("Login error:", error);
+
+            // Map Supabase errors to Indonesian messages
+            if (error.message.includes('Invalid login credentials')) {
+                showNotification('Email atau password salah. Silakan coba lagi.');
+            } else if (error.message.includes('Email not confirmed')) {
+                showNotification('Email belum dikonfirmasi. Silakan cek inbox Anda.');
+            } else {
+                showNotification(error.message);
+            }
         } else {
             navigate('/dashboard');
         }
@@ -36,6 +66,12 @@ export default function Login() {
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-transparent p-4">
+            <Notification
+                message={notification.message}
+                type={notification.type}
+                isVisible={notification.isVisible}
+                onClose={() => setNotification(prev => ({ ...prev, isVisible: false }))}
+            />
             <div className="bg-slate-900/50 backdrop-blur-xl p-8 rounded-2xl border border-white/10 shadow-2xl w-full max-w-md relative overflow-hidden group">
                 {/* Decorative gradient glow */}
                 <div className="absolute top-[-50%] left-[-50%] w-[200%] h-[200%] bg-purple-500/10 rounded-full blur-[80px] pointer-events-none group-hover:bg-purple-500/15 transition-all duration-500" />
