@@ -13,11 +13,28 @@ export default function Settings() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [passwordLoading, setPasswordLoading] = useState(false);
 
+    // Session Timeout State
+    const [sessionTimeout, setSessionTimeout] = useState<string>('15');
+
     useEffect(() => {
+        const savedTimeout = localStorage.getItem('session_timeout');
+        if (savedTimeout) {
+            setSessionTimeout(savedTimeout);
+        }
+
         supabase.auth.getUser().then(({ data: { user } }) => {
             if (user) setUserId(user.id);
         });
     }, []);
+
+    const handleUpdateTimeout = (e: React.FormEvent) => {
+        e.preventDefault();
+        localStorage.setItem('session_timeout', sessionTimeout);
+        alert("Session timeout updated successfully!");
+        // We might want to trigger a reload or some event to let AutoLogout know,
+        // but since it reads from localStorage on resetTimer, it should pick it up.
+        window.location.reload();
+    };
 
     const handleDeleteAccount = async () => {
         if (confirm("Are you SURE you want to delete your account? This action cannot be undone.")) {
@@ -114,6 +131,37 @@ export default function Settings() {
                             className="w-full md:w-auto bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-lg disabled:opacity-50"
                         >
                             {passwordLoading ? "Updating..." : "Update Password"}
+                        </button>
+                    </form>
+                </div>
+
+                {/* Session Timeout Section */}
+                <div className="bg-slate-900/50 backdrop-blur-xl p-8 rounded-2xl shadow-xl border border-white/10 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 p-4 opacity-30">
+                        <div className="w-20 h-20 bg-emerald-500/20 rounded-full blur-2xl"></div>
+                    </div>
+                    <h2 className="text-xl font-bold mb-4 text-emerald-400 relative z-10">Session Management</h2>
+                    <p className="text-slate-300 mb-6 relative z-10">
+                        Automatically log out after a period of inactivity. Set to 0 to disable.
+                    </p>
+                    <form onSubmit={handleUpdateTimeout} className="space-y-4 relative z-10">
+                        <div className="flex flex-col gap-2">
+                            <label className="text-sm text-slate-400">Inactivity Timeout (Minutes)</label>
+                            <input
+                                type="number"
+                                min="0"
+                                className="p-3 rounded-xl bg-slate-950 border border-white/10 focus:border-emerald-500 focus:outline-none transition-all"
+                                value={sessionTimeout}
+                                onChange={(e) => setSessionTimeout(e.target.value)}
+                                placeholder="Default: 15"
+                                required
+                            />
+                        </div>
+                        <button
+                            type="submit"
+                            className="w-full md:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-lg"
+                        >
+                            Update Timeout
                         </button>
                     </form>
                 </div>
