@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import supabase from '../lib/supabase';
+import Notification from '../components/Notification';
+import type { NotificationType } from '../components/Notification';
 
 export default function SignUp() {
     const [loading, setLoading] = useState(false);
@@ -8,6 +10,25 @@ export default function SignUp() {
     const [password, setPassword] = useState('');
     const [username, setUsername] = useState('');
     const navigate = useNavigate();
+
+    // Notification state
+    const [notification, setNotification] = useState<{
+        message: string;
+        type: NotificationType;
+        isVisible: boolean;
+    }>({
+        message: '',
+        type: 'info',
+        isVisible: false
+    });
+
+    const showNotification = (message: string, type: NotificationType = 'error') => {
+        setNotification({
+            message,
+            type,
+            isVisible: true
+        });
+    };
 
     const handleSignUp = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -25,17 +46,36 @@ export default function SignUp() {
 
         if (error) {
             console.error("Sign up error:", error);
-            alert(error.message);
+
+            // Map Supabase errors to Indonesian messages
+            if (error.message.includes('User already registered')) {
+                showNotification('Email sudah terdaftar. Silakan gunakan email lain atau login.');
+            } else if (error.message.includes('Password should be at least')) {
+                showNotification('Password terlalu pendek. Minimal 6 karakter.');
+            } else if (error.message.includes('Invalid format')) {
+                showNotification('Format email tidak valid.');
+            } else {
+                showNotification(error.message);
+            }
         } else {
             console.log("Sign up successful", data);
-            alert('Account created successfully!');
-            navigate('/login');
+            showNotification('Akun berhasil dibuat! Silakan login.', 'success');
+            // Wait a bit for the user to see the success message
+            setTimeout(() => {
+                navigate('/login');
+            }, 2000);
         }
         setLoading(false);
     };
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-transparent p-4">
+            <Notification
+                message={notification.message}
+                type={notification.type}
+                isVisible={notification.isVisible}
+                onClose={() => setNotification(prev => ({ ...prev, isVisible: false }))}
+            />
             <div className="bg-slate-900/50 backdrop-blur-xl p-8 rounded-2xl border border-white/10 shadow-2xl w-full max-w-md relative overflow-hidden group">
                 {/* Decorative gradient glow */}
                 <div className="absolute top-[-50%] left-[-50%] w-[200%] h-[200%] bg-blue-500/10 rounded-full blur-[80px] pointer-events-none group-hover:bg-blue-500/15 transition-all duration-500" />
