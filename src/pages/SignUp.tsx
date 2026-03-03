@@ -59,7 +59,7 @@ export default function SignUp() {
             }
         } else {
             console.log("Sign up successful", data);
-            showNotification('Akun berhasil dibuat! Silakan login.', 'success');
+            showNotification('Account created successfully! Please login.', 'success');
             // Wait a bit for the user to see the success message
             setTimeout(() => {
                 navigate('/login');
