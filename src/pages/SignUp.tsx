@@ -49,11 +49,11 @@ export default function SignUp() {
 
             // Map Supabase errors to Indonesian messages
             if (error.message.includes('User already registered')) {
-                showNotification('Email sudah terdaftar. Silakan gunakan email lain atau login.');
+                showNotification('Email has already been registered. Please use another email or login.');
             } else if (error.message.includes('Password should be at least')) {
-                showNotification('Password terlalu pendek. Minimal 6 karakter.');
+                showNotification('Password is too short. Minimum 6 characters.');
             } else if (error.message.includes('Invalid format')) {
-                showNotification('Format email tidak valid.');
+                showNotification('Invalid email format.');
             } else {
                 showNotification(error.message);
             }
