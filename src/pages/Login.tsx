@@ -52,9 +52,9 @@ export default function Login() {
 
             // Map Supabase errors to Indonesian messages
             if (error.message.includes('Invalid login credentials')) {
-                showNotification('Email atau password salah. Silakan coba lagi.');
+                showNotification('Email or password is wrong. Please try again.');
             } else if (error.message.includes('Email not confirmed')) {
-                showNotification('Email belum dikonfirmasi. Silakan cek inbox Anda.');
+                showNotification('Email not confirmed. Please check your inbox.');
             } else {
                 showNotification(error.message);
             }
