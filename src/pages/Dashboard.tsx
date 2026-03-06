@@ -5,6 +5,8 @@ import { analyzeAction } from '../lib/gemini';
 import { saveActivityLog, updateUserStats, getUserStats, updateUserXP, getUserProfile, allocateSkillPoint, type UserStats } from '../lib/db';
 import { playLevelUpSound } from '../lib/audio';
 import supabase from '../lib/supabase';
+import Notification from '../components/Notification';
+import type { NotificationType } from '../components/Notification';
 
 // Helper to format DB stats for the chart
 const formatStatsForChart = (stats: UserStats | null) => {
@@ -41,6 +43,25 @@ export default function Dashboard() {
     const [skillPoints, setSkillPoints] = useState(0);
     const [showCelebration, setShowCelebration] = useState(false);
 
+    // Notification state
+    const [notification, setNotification] = useState<{
+        message: string;
+        type: NotificationType;
+        isVisible: boolean;
+    }>({
+        message: '',
+        type: 'info',
+        isVisible: false
+    });
+
+    const showNotification = (message: string, type: NotificationType = 'error') => {
+        setNotification({
+            message,
+            type,
+            isVisible: true
+        });
+    };
+
     // Fetch initial stats and user ID
     useEffect(() => {
         const fetchUserData = async () => {
@@ -70,7 +91,7 @@ export default function Dashboard() {
     const handleGenerate = async () => {
         if (!prompt) return;
         if (!userId) {
-            alert("You must be logged in to save progress.");
+            showNotification("You must be logged in to save progress.");
             return;
         }
 
@@ -129,7 +150,7 @@ export default function Dashboard() {
             }
         } catch (error) {
             console.error("Allocation failed", error);
-            alert("Failed to allocate point.");
+            showNotification("Failed to allocate point.");
         }
     };
 
@@ -139,6 +160,12 @@ export default function Dashboard() {
 
     return (
         <div className="text-white p-6 md:p-10 relative">
+            <Notification
+                message={notification.message}
+                type={notification.type}
+                isVisible={notification.isVisible}
+                onClose={() => setNotification(prev => ({ ...prev, isVisible: false }))}
+            />
             <LevelUpCelebration show={showCelebration} onClose={() => setShowCelebration(false)} />
 
             <header className="mb-8 flex justify-between items-end backdrop-blur-sm bg-slate-900/30 p-4 rounded-xl border border-white/5">
