@@ -4,6 +4,7 @@ import { resetAccountProgress } from '../lib/db';
 import { useState, useEffect } from 'react';
 import Notification from '../components/Notification';
 import type { NotificationType } from '../components/Notification';
+import ConfirmationModal from '../components/ConfirmationModal';
 
 export default function Settings() {
     const navigate = useNavigate();
@@ -37,6 +38,10 @@ export default function Settings() {
         });
     };
 
+    // Confirmation Modal States
+    const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [isResetModalOpen, setResetModalOpen] = useState(false);
+
     useEffect(() => {
         const savedTimeout = localStorage.getItem('session_timeout');
         if (savedTimeout) {
@@ -64,27 +69,25 @@ export default function Settings() {
     };
 
     const handleDeleteAccount = async () => {
-        if (confirm("Are you SURE you want to delete your account? This action cannot be undone.")) {
-            showNotification("Account deletion request received. (Placeholder logic)", 'info');
-            await supabase.auth.signOut();
-            navigate('/login');
-        }
+        setDeleteModalOpen(false);
+        showNotification("Account deletion request received. (Placeholder logic)", 'info');
+        await supabase.auth.signOut();
+        navigate('/login');
     };
 
     const handleResetProgress = async () => {
         if (!userId) return;
 
-        if (confirm("Are you sure you want to reset your account progress? This will wipe your stats, level, and history, but keep your account. You will be sent back to the Origin Story page.")) {
-            setLoading(true);
-            try {
-                await resetAccountProgress(userId);
-                // Redirect immediately after success
-                navigate('/origin');
-            } catch (error) {
-                console.error("Failed to reset progress:", error);
-                showNotification("Failed to reset progress. Please try again.");
-                setLoading(false);
-            }
+        setResetModalOpen(false);
+        setLoading(true);
+        try {
+            await resetAccountProgress(userId);
+            // Redirect immediately after success
+            navigate('/origin');
+        } catch (error) {
+            console.error("Failed to reset progress:", error);
+            showNotification("Failed to reset progress. Please try again.");
+            setLoading(false);
         }
     };
 
@@ -210,7 +213,7 @@ export default function Settings() {
                         Want to start over? This will reset all your stats, level, and history. You'll keep your account credentials.
                     </p>
                     <button
-                        onClick={handleResetProgress}
+                        onClick={() => setResetModalOpen(true)}
                         disabled={loading}
                         className="bg-amber-600/80 hover:bg-amber-700 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-lg hover:shadow-amber-900/20 border border-amber-500/50 relative z-10 disabled:opacity-50"
                     >
@@ -228,13 +231,37 @@ export default function Settings() {
                         Once you delete your account, there is no going back. Please be certain.
                     </p>
                     <button
-                        onClick={handleDeleteAccount}
+                        onClick={() => setDeleteModalOpen(true)}
                         className="bg-red-500/80 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-lg hover:shadow-red-900/20 border border-red-500/50 relative z-10"
                     >
                         Delete Account
                     </button>
                 </div>
             </div>
+
+            {/* Modals */}
+            <ConfirmationModal
+                isOpen={isDeleteModalOpen}
+                title="Delete Account?"
+                message="Are you SURE you want to delete your account? This action cannot be undone and all your progress will be lost forever."
+                confirmText="Yes, Delete My Account"
+                cancelText="Cancel"
+                type="danger"
+                onConfirm={handleDeleteAccount}
+                onCancel={() => setDeleteModalOpen(false)}
+            />
+
+            <ConfirmationModal
+                isOpen={isResetModalOpen}
+                title="Reset Progress?"
+                message="Are you sure you want to reset your account progress? This will wipe your stats, level, and history, but keep your account credentials. You will be sent back to the Origin Story page."
+                confirmText="Yes, Reset Everything"
+                cancelText="Cancel"
+                type="warning"
+                onConfirm={handleResetProgress}
+                onCancel={() => setResetModalOpen(false)}
+                isLoading={loading}
+            />
         </div>
     );
 }
