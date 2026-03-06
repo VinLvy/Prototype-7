@@ -4,6 +4,8 @@ import supabase from '../lib/supabase';
 import { analyzeOriginStory, type OriginStoryAnalysis } from '../lib/gemini';
 import { saveInitialStats, completeOnboarding } from '../lib/db';
 import HexagonChart from '../components/HexagonChart';
+import Notification from '../components/Notification';
+import type { NotificationType } from '../components/Notification';
 
 export default function OriginStory() {
     const navigate = useNavigate();
@@ -11,6 +13,25 @@ export default function OriginStory() {
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState<OriginStoryAnalysis | null>(null);
     const [userId, setUserId] = useState<string | null>(null);
+
+    // Notification state
+    const [notification, setNotification] = useState<{
+        message: string;
+        type: NotificationType;
+        isVisible: boolean;
+    }>({
+        message: '',
+        type: 'info',
+        isVisible: false
+    });
+
+    const showNotification = (message: string, type: NotificationType = 'error') => {
+        setNotification({
+            message,
+            type,
+            isVisible: true
+        });
+    };
 
     useEffect(() => {
         supabase.auth.getUser().then(({ data: { user } }) => {
@@ -26,7 +47,7 @@ export default function OriginStory() {
             setResult(analysis);
         } catch (error) {
             console.error("Analysis failed:", error);
-            alert("Failed to analyze story. Please try again.");
+            showNotification("Failed to analyze story. Please try again.");
         } finally {
             setLoading(false);
         }
@@ -35,7 +56,7 @@ export default function OriginStory() {
     const handleConfirm = async () => {
         if (!userId) {
             console.error("No userId found in state!");
-            alert("User session missing. Please try logging in again.");
+            showNotification("User session missing. Please try logging in again.");
             return;
         }
         if (!result) {
@@ -66,7 +87,7 @@ export default function OriginStory() {
             console.error("Critical error saving profile:", error);
             // Show more specific error if possible
             const msg = error?.message || "Unknown error";
-            alert(`Failed to save your profile: ${msg}. Please try again. Check console for details.`);
+            showNotification(`Failed to save your profile: ${msg}. Please try again. Check console for details.`);
         } finally {
             console.log("handleConfirm finished.");
             setLoading(false);
@@ -85,6 +106,12 @@ export default function OriginStory() {
 
     return (
         <div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-4 relative overflow-hidden">
+            <Notification
+                message={notification.message}
+                type={notification.type}
+                isVisible={notification.isVisible}
+                onClose={() => setNotification(prev => ({ ...prev, isVisible: false }))}
+            />
             {/* Background Effects */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
                 <div className="absolute top-[-20%] left-[-20%] w-[150%] h-[150%] bg-purple-900/10 blur-[120px] rounded-full animate-pulse"></div>
