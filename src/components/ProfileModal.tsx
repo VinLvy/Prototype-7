@@ -4,6 +4,7 @@ import { X, Save, User as UserIcon, Camera } from 'lucide-react';
 import type { UserProfile } from '../lib/db';
 import { uploadAvatar, deleteAvatarFromUrl } from '../lib/storage';
 import ImageCropper from './ImageCropper';
+import Notification, { type NotificationType } from './Notification';
 import { getTitleConfig } from '../lib/titles';
 
 interface ProfileModalProps {
@@ -22,6 +23,25 @@ export default function ProfileModal({ isOpen, onClose, userProfile, onUpdate }:
 
     // New state for cropping
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+    // Notification state
+    const [notification, setNotification] = useState<{
+        message: string;
+        type: NotificationType;
+        isVisible: boolean;
+    }>({
+        message: '',
+        type: 'info',
+        isVisible: false
+    });
+
+    const showNotification = (message: string, type: NotificationType = 'error') => {
+        setNotification({
+            message,
+            type,
+            isVisible: true
+        });
+    };
 
     useEffect(() => {
         if (userProfile) {
@@ -67,11 +87,11 @@ export default function ProfileModal({ isOpen, onClose, userProfile, onUpdate }:
                 setAvatarUrl(uploadedUrl);
                 setSelectedImage(null); // Return to form
             } else {
-                alert('Failed to upload image. Please try again.');
+                showNotification('Failed to upload image. Please try again.');
             }
         } catch (error) {
             console.error('File upload error:', error);
-            alert('Error during upload.');
+            showNotification('Error during upload.');
         } finally {
             setIsUploading(false);
         }
@@ -96,7 +116,7 @@ export default function ProfileModal({ isOpen, onClose, userProfile, onUpdate }:
             onClose();
         } catch (error) {
             console.error(error);
-            alert('Failed to update profile');
+            showNotification('Failed to update profile');
         } finally {
             setIsLoading(false);
         }
@@ -104,6 +124,12 @@ export default function ProfileModal({ isOpen, onClose, userProfile, onUpdate }:
 
     return createPortal(
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+            <Notification
+                message={notification.message}
+                type={notification.type}
+                isVisible={notification.isVisible}
+                onClose={() => setNotification(prev => ({ ...prev, isVisible: false }))}
+            />
             <div className="bg-slate-900/90 backdrop-blur-xl border border-white/10 rounded-2xl w-full max-w-md p-6 shadow-2xl relative animate-in fade-in zoom-in duration-200">
                 <button
                     onClick={onClose}
