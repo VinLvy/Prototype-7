@@ -2,6 +2,8 @@ import supabase from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
 import { resetAccountProgress } from '../lib/db';
 import { useState, useEffect } from 'react';
+import Notification from '../components/Notification';
+import type { NotificationType } from '../components/Notification';
 
 export default function Settings() {
     const navigate = useNavigate();
@@ -15,6 +17,25 @@ export default function Settings() {
 
     // Session Timeout State
     const [sessionTimeout, setSessionTimeout] = useState<string>('15');
+
+    // Notification state
+    const [notification, setNotification] = useState<{
+        message: string;
+        type: NotificationType;
+        isVisible: boolean;
+    }>({
+        message: '',
+        type: 'info',
+        isVisible: false
+    });
+
+    const showNotification = (message: string, type: NotificationType = 'error') => {
+        setNotification({
+            message,
+            type,
+            isVisible: true
+        });
+    };
 
     useEffect(() => {
         const savedTimeout = localStorage.getItem('session_timeout');
@@ -35,13 +56,16 @@ export default function Settings() {
         localStorage.setItem('session_timeout', cappedTimeout.toString());
         setSessionTimeout(cappedTimeout.toString());
 
-        alert(`Session timeout updated successfully${cappedTimeout < timeoutValue ? ' (capped at 15 minutes)' : ''}!`);
-        window.location.reload();
+        showNotification(`Session timeout updated successfully${cappedTimeout < timeoutValue ? ' (capped at 15 minutes)' : ''}!`, 'success');
+        // Wait a bit for notification to be visible
+        setTimeout(() => {
+            window.location.reload();
+        }, 1500);
     };
 
     const handleDeleteAccount = async () => {
         if (confirm("Are you SURE you want to delete your account? This action cannot be undone.")) {
-            alert("Account deletion request received. (Placeholder logic)");
+            showNotification("Account deletion request received. (Placeholder logic)", 'info');
             await supabase.auth.signOut();
             navigate('/login');
         }
@@ -58,7 +82,7 @@ export default function Settings() {
                 navigate('/origin');
             } catch (error) {
                 console.error("Failed to reset progress:", error);
-                alert("Failed to reset progress. Please try again.");
+                showNotification("Failed to reset progress. Please try again.");
                 setLoading(false);
             }
         }
@@ -67,11 +91,11 @@ export default function Settings() {
     const handleUpdatePassword = async (e: React.FormEvent) => {
         e.preventDefault();
         if (newPassword !== confirmPassword) {
-            alert("Passwords do not match!");
+            showNotification("Passwords do not match!");
             return;
         }
         if (newPassword.length < 6) {
-            alert("Password must be at least 6 characters long.");
+            showNotification("Password must be at least 6 characters long.");
             return;
         }
 
@@ -82,9 +106,9 @@ export default function Settings() {
 
         if (error) {
             console.error("Error updating password:", error);
-            alert(`Failed to update password: ${error.message}`);
+            showNotification(`Failed to update password: ${error.message}`);
         } else {
-            alert("Password updated successfully!");
+            showNotification("Password updated successfully!", 'success');
             setNewPassword('');
             setConfirmPassword('');
         }
@@ -93,6 +117,12 @@ export default function Settings() {
 
     return (
         <div className="p-8 text-white min-h-full">
+            <Notification
+                message={notification.message}
+                type={notification.type}
+                isVisible={notification.isVisible}
+                onClose={() => setNotification(prev => ({ ...prev, isVisible: false }))}
+            />
             <h1 className="text-3xl font-bold mb-6 text-purple-400">Settings</h1>
 
             <div className="space-y-6 max-w-2xl">
