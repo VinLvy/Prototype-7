@@ -14,18 +14,6 @@ interface TitlesModalProps {
 export default function TitlesModal({ isOpen, onClose, userStats, currentTitleId, onSelectTitle }: TitlesModalProps) {
     if (!isOpen) return null;
 
-    // Use name or id for matching, trying to match current ID logic
-    // But since currentTitleId might be a name (legacy), we need to be careful.
-    // The parent likely passes the ID now, or we'll handle it.
-    // Ideally we should match by ID. If currentTitleId is 'Novice' (name), it won't match 'novice' (id).
-    // Let's rely on the parent or normalize here.
-    // For now, assume strict ID matching, but maybe match name if ID not found?
-
-    // Actually, let's just stick to ID. The DB migration/compat is handled elsewhere hopefully.
-    // If the user has "Novice" in DB, and we pass that as currentTitleId, 
-    // we might want to normalize it to lowercase for comparison if no direct match?
-    // Let's do a loose check.
-
     const normalize = (s: string | undefined) => s?.toLowerCase();
     const activeTitleId = normalize(currentTitleId) || 'novice';
 
