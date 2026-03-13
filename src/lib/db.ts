@@ -148,7 +148,6 @@ export const updateUserStats = async (userId: string, statsIncrease: { [key: str
 
 // Returns { levelUp: boolean, newLevel: number, currentExp: number, skillPoints: number }
 export const updateUserXP = async (userId: string, xpGained: number) => {
-    // 1. Get current User data
     const { data: user, error } = await supabase
         .from('users')
         .select('level, current_exp, skill_points')
@@ -161,26 +160,21 @@ export const updateUserXP = async (userId: string, xpGained: number) => {
     }
 
     let { level, current_exp, skill_points } = user;
-    // Default to 0 if null/undefined
     skill_points = skill_points || 0;
 
-    // Ensure XP never decreases
     if (xpGained > 0) {
         current_exp += xpGained;
     }
-
-    // Simple Level Up Formula: 100 XP per level
     const xpNeeded = level * 100;
     let levelUp = false;
 
     if (current_exp >= xpNeeded) {
         level += 1;
         current_exp -= xpNeeded;
-        skill_points += 1; // Award 1 skill point
+        skill_points += 1;
         levelUp = true;
     }
 
-    // 2. Update DB
     const { error: updateError } = await supabase
         .from('users')
         .update({ level, current_exp, skill_points })
