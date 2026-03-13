@@ -307,14 +307,11 @@ export const saveInitialStats = async (userId: string, stats: { [key: string]: n
 };
 
 export const completeOnboarding = async (userId: string, characterClass: string) => {
-    // 1. Update character class in profile first (database)
     if (characterClass) {
         console.log(`Setting character class to ${characterClass}...`);
         await updateUserProfile(userId, { character_class: characterClass });
     }
 
-    // 2. Update user metadata (auth)
-    // We do this last because it triggers a re-render in ProtectedRoute
     console.log("Updating auth metadata: onboarding_complete = true");
     const { error: metaError } = await supabase.auth.updateUser({
         data: { onboarding_complete: true }
@@ -328,7 +325,6 @@ export const completeOnboarding = async (userId: string, characterClass: string)
 };
 
 export const resetAccountProgress = async (userId: string) => {
-    // 1. Reset user profile
     const { error: userError } = await supabase
         .from('users')
         .update({
@@ -345,7 +341,6 @@ export const resetAccountProgress = async (userId: string) => {
         throw userError;
     }
 
-    // 2. Reset user stats
     const { error: statsError } = await supabase
         .from('user_stats')
         .update({
@@ -363,7 +358,6 @@ export const resetAccountProgress = async (userId: string) => {
         throw statsError;
     }
 
-    // 3. Clear activity logs
     const { error: logsError } = await supabase
         .from('activity_logs')
         .delete()
@@ -374,7 +368,6 @@ export const resetAccountProgress = async (userId: string) => {
         throw logsError;
     }
 
-    // 4. Reset onboarding metadata
     const { error: authError } = await supabase.auth.updateUser({
         data: { onboarding_complete: false }
     });
@@ -384,7 +377,6 @@ export const resetAccountProgress = async (userId: string) => {
         throw authError;
     }
 
-    // 5. Force session refresh to sync local metadata
     await supabase.auth.refreshSession();
 
     notifyUserDataChange();
