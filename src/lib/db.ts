@@ -107,17 +107,11 @@ export const updateUserProfile = async (userId: string, updates: Partial<UserPro
 };
 
 export const updateUserStats = async (userId: string, statsIncrease: { [key: string]: number }) => {
-    // 1. Get current stats
     const currentStats = await getUserStats(userId);
 
     if (!currentStats) {
         throw new Error("User stats not found");
     }
-
-    // 2. Calculate new stats
-    // Mapping from AI response keys (e.g., 'STR') to Database columns (e.g., 'strength')
-    // AI Keys: STR, INT, CHA, CRE, WIS, WEA
-    // DB Columns: strength, intelligence, charisma, creativity, wisdom, wealth
 
     const mapKeyToColumn: { [key: string]: string } = {
         'STR': 'strength',
@@ -138,7 +132,6 @@ export const updateUserStats = async (userId: string, statsIncrease: { [key: str
         }
     }
 
-    // 3. Update database
     const { error } = await supabase
         .from('user_stats')
         .update(newStats)
@@ -149,10 +142,6 @@ export const updateUserStats = async (userId: string, statsIncrease: { [key: str
         throw error;
     }
 
-    // 4. Update Title based on new total stats
-
-
-    // however, since it updates global state (stats + title), we SHOULD notify.
     notifyUserDataChange();
     return newStats;
 };
