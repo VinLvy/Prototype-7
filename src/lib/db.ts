@@ -189,7 +189,6 @@ export const updateUserXP = async (userId: string, xpGained: number) => {
 };
 
 export const allocateSkillPoint = async (userId: string, statKey: string) => {
-    // 1. Validate Skill Points
     const { data: user, error: userError } = await supabase
         .from('users')
         .select('skill_points')
@@ -202,8 +201,6 @@ export const allocateSkillPoint = async (userId: string, statKey: string) => {
         throw new Error("No skill points available");
     }
 
-    // 2. Update Stats
-    // Map 'STR' -> 'strength'
     const mapKeyToColumn: { [key: string]: string } = {
         'STR': 'strength',
         'INT': 'intelligence',
@@ -221,8 +218,6 @@ export const allocateSkillPoint = async (userId: string, statKey: string) => {
     // @ts-ignore
     const newValue = (currentStats[column] || 0) + 1;
 
-    // Perform updates (optimistic: if one fails, we might have issue, but usually ok)
-    // Update Stats
     const { error: statsError } = await supabase
         .from('user_stats')
         .update({ [column]: newValue })
@@ -258,8 +253,6 @@ export const getActivityLogs = async (userId: string) => {
 };
 
 export const saveInitialStats = async (userId: string, stats: { [key: string]: number }) => {
-    // 1. Ensure user record exists in public.users first
-    // This is a safety measure in case the auth trigger failed
     const { data: userData, error: userFetchError } = await supabase
         .from('users')
         .select('id')
@@ -284,7 +277,6 @@ export const saveInitialStats = async (userId: string, stats: { [key: string]: n
         }
     }
 
-    // 2. Map keys to DB columns
     const mapKeyToColumn: { [key: string]: string } = {
         'STR': 'strength',
         'INT': 'intelligence',
@@ -302,7 +294,6 @@ export const saveInitialStats = async (userId: string, stats: { [key: string]: n
         }
     }
 
-    // 3. Upsert stats
     console.log(`Saving initial stats for user ${userId}...`);
     const { error } = await supabase
         .from('user_stats')
