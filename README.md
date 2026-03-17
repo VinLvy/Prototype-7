@@ -1,10 +1,8 @@
-ADD STARTING PROMPT, USER TELLS US WHO IS HE, SO THE STAT WON'T START FROM 0
-
 # ReLife RPG (Prototype-7)
 
 ReLife RPG is a gamified life-tracking application that transforms your daily activities and achievements into RPG statistics. By logging your daily progress, the integrated **Google Gemini AI** analyzes your entries and awards you experience points (XP) and stat increases across six core attributes: **Strength**, **Intelligence**, **Charisma**, **Creativity**, **Wisdom**, and **Wealth**.
 
-![ReLife RPG Dashboard](https://via.placeholder.com/800x450?text=ReLife+RPG+Dashboard+Preview)
+![ReLife RPG Dashboard](./src/assets/dashboard.png)
 
 ## 🚀 Features
 
@@ -12,8 +10,9 @@ ReLife RPG is a gamified life-tracking application that transforms your daily ac
 *   **Hexagon Stat System**: Visualize your personal growth with a dynamic Radar Chart showing your balance across 6 key attributes.
 *   **Leveling System**: Gain XP, level up, and earn **Skill Points** to manually allocate to your desired stats.
 *   **Gamified Progression**: Unlock unique **Titles** and **Character Classes** based on your stat distribution (e.g., reaching high Intelligence unlocks the "Sage" title).
-*   **Modern Cyberpunk UI**: A sleek, dark-mode interface featuring glassmorphism, smooth animations (Framer Motion), and responsive design.
-*   **Profile Management**: Customize your profile with a cropped avatar, username, and selectable titles.
+*   **Modern Cyberpunk UI**: A sleek, dark-mode interface featuring glassmorphism, smooth animations (Framer Motion), custom in-app notifications, and responsive design.
+*   **Profile Management (Origin Story)**: Customize your profile with a cropped avatar, username, and selectable titles.
+*   **Account Controls**: Manage your account with features like auto-logout on session timeout and an option to completely reset your account progress from settings.
 *   **Secure Authentication**: User management powered by Supabase.
 
 ## 🛠️ Tech Stack
