@@ -5,6 +5,8 @@ import Dashboard from './pages/Dashboard';
 import History from './pages/History';
 import Settings from './pages/Settings';
 import OriginStory from './pages/OriginStory';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
@@ -20,6 +22,8 @@ function App() {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
 
             {/* Helper to redirect users who try to access root */}
             <Route path="/" element={<Navigate to="/login" replace />} />
