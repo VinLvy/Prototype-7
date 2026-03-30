@@ -213,81 +213,62 @@ export default function Settings() {
                         <div className="absolute top-0 right-0 p-4 opacity-30">
                             <div className="w-20 h-20 bg-amber-500/20 rounded-full blur-2xl"></div>
                         </div>
+                        <h2 className="text-xl font-bold mb-4 text-amber-400 relative z-10">Reset Progress</h2>
+                        <p className="text-slate-300 mb-6 relative z-10">
+                            Want to start over? This will reset all your stats, level, and history. You'll keep your account credentials.
+                        </p>
                         <button
-                            type="submit"
-                            disabled={passwordLoading}
-                            className="w-full md:w-auto bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-lg disabled:opacity-50"
+                            onClick={() => setResetModalOpen(true)}
+                            disabled={loading}
+                            className="bg-amber-600/80 hover:bg-amber-700 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-lg hover:shadow-amber-900/20 border border-amber-500/50 relative z-10 disabled:opacity-50"
                         >
-                            {passwordLoading ? "Updating..." : "Update Password"}
+                            {loading ? "Resetting..." : "Reset Account Progress"}
                         </button>
-                    </form>
-                </div>
-
-                {/* Session Timeout Section */}
-                <div className="bg-slate-900/50 backdrop-blur-xl p-8 rounded-2xl shadow-xl border border-white/10 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 p-4 opacity-30">
-                        <div className="w-20 h-20 bg-emerald-500/20 rounded-full blur-2xl"></div>
                     </div>
-                    <h2 className="text-xl font-bold mb-4 text-emerald-400 relative z-10">Session Management</h2>
-                    <p className="text-slate-300 mb-6 relative z-10">
-                        Automatically log out after a period of inactivity. Set to 0 to disable (Max 15 minutes).
-                    </p>
-                    <form onSubmit={handleUpdateTimeout} className="space-y-4 relative z-10">
-                        <div className="flex flex-col gap-2">
-                            <label className="text-sm text-slate-400">Inactivity Timeout (Minutes, Max 15)</label>
-                            <input
-                                type="number"
-                                min="0"
-                                max="15"
-                                className="p-3 rounded-xl bg-slate-950 border border-white/10 focus:border-emerald-500 focus:outline-none transition-all"
-                                value={sessionTimeout}
-                                onChange={(e) => setSessionTimeout(e.target.value)}
-                                placeholder="Default: 15 (Max 15)"
-                                required
-                            />
+
+                    {/* Danger Zone Section */}
+                    <div className="bg-slate-900/50 backdrop-blur-xl p-8 rounded-2xl shadow-xl border border-white/10 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 p-4 opacity-50">
+                            <div className="w-20 h-20 bg-red-500/20 rounded-full blur-2xl"></div>
                         </div>
+                        <h2 className="text-xl font-bold mb-4 text-red-400 relative z-10">Danger Zone</h2>
+                        <p className="text-slate-300 mb-6 relative z-10">
+                            Once you delete your account, there is no going back. Please be certain.
+                        </p>
                         <button
-                            type="submit"
-                            className="w-full md:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-lg"
+                            onClick={() => setDeleteModalOpen(true)}
+                            className="bg-red-500/80 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-lg hover:shadow-red-900/20 border border-red-500/50 relative z-10"
                         >
-                            Update Timeout
+                            Delete Account
                         </button>
-                    </form>
-                </div>
-
-                {/* Reset Progress Section */}
-                <div className="bg-slate-900/50 backdrop-blur-xl p-8 rounded-2xl shadow-xl border border-white/10 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 p-4 opacity-30">
-                        <div className="w-20 h-20 bg-amber-500/20 rounded-full blur-2xl"></div>
                     </div>
-                    <h2 className="text-xl font-bold mb-4 text-amber-400 relative z-10">Reset Progress</h2>
-                    <p className="text-slate-300 mb-6 relative z-10">
-                        Want to start over? This will reset all your stats, level, and history. You'll keep your account credentials.
-                    </p>
-                    <button
-                        onClick={() => setResetModalOpen(true)}
-                        disabled={loading}
-                        className="bg-amber-600/80 hover:bg-amber-700 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-lg hover:shadow-amber-900/20 border border-amber-500/50 relative z-10 disabled:opacity-50"
-                    >
-                        {loading ? "Resetting..." : "Reset Account Progress"}
-                    </button>
-                </div>
 
-                {/* Danger Zone Section */}
-                <div className="bg-slate-900/50 backdrop-blur-xl p-8 rounded-2xl shadow-xl border border-white/10 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 p-4 opacity-50">
-                        <div className="w-20 h-20 bg-red-500/20 rounded-full blur-2xl"></div>
+                    {/* System Information / Decorative Card */}
+                    <div className="bg-slate-900/50 backdrop-blur-xl p-8 rounded-2xl shadow-xl border border-white/10 relative overflow-hidden flex flex-col items-center text-center">
+                        <div className="absolute top-0 right-0 p-4 opacity-30">
+                            <div className="w-32 h-32 bg-purple-500/20 rounded-full blur-3xl"></div>
+                        </div>
+                        <div className="absolute bottom-0 left-0 p-4 opacity-30">
+                            <div className="w-32 h-32 bg-indigo-500/20 rounded-full blur-3xl"></div>
+                        </div>
+                        <div className="relative z-10 p-5 rounded-full bg-slate-950/50 border border-white/5 mb-5 shadow-inner">
+                            <svg className="w-12 h-12 text-purple-400 opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                        </div>
+                        <h3 className="text-xl font-bold text-white mb-3 relative z-10">System Status</h3>
+                        <p className="text-slate-400 text-sm relative z-10 mb-6">
+                            Your account settings and security preferences are fully synced. Keep your password secure and ensure session timeouts use recommended limits.
+                        </p>
+                        <div className="w-full bg-slate-950/80 rounded-xl p-4 border border-white/5 relative z-10 flex items-center justify-between">
+                            <span className="text-slate-500 text-xs font-bold uppercase tracking-wider">Health</span>
+                            <span className="text-emerald-400 font-mono text-sm flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                                OPTIMAL
+                            </span>
+                        </div>
                     </div>
-                    <h2 className="text-xl font-bold mb-4 text-red-400 relative z-10">Danger Zone</h2>
-                    <p className="text-slate-300 mb-6 relative z-10">
-                        Once you delete your account, there is no going back. Please be certain.
-                    </p>
-                    <button
-                        onClick={() => setDeleteModalOpen(true)}
-                        className="bg-red-500/80 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-lg hover:shadow-red-900/20 border border-red-500/50 relative z-10"
-                    >
-                        Delete Account
-                    </button>
                 </div>
             </div>
 
