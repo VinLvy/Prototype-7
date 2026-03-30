@@ -128,38 +128,90 @@ export default function Settings() {
             />
             <h1 className="text-3xl font-bold mb-6 text-purple-400">Settings</h1>
 
-            <div className="space-y-6 max-w-2xl">
-                {/* Change Password Section */}
-                <div className="bg-slate-900/50 backdrop-blur-xl p-8 rounded-2xl shadow-xl border border-white/10 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 p-4 opacity-30">
-                        <div className="w-20 h-20 bg-blue-500/20 rounded-full blur-2xl"></div>
-                    </div>
-                    <h2 className="text-xl font-bold mb-4 text-blue-400 relative z-10">Security</h2>
-                    <p className="text-slate-300 mb-6 relative z-10">
-                        Update your account password.
-                    </p>
-                    <form onSubmit={handleUpdatePassword} className="space-y-4 relative z-10">
-                        <div className="flex flex-col gap-2">
-                            <label className="text-sm text-slate-400">New Password</label>
-                            <input
-                                type="password"
-                                className="p-3 rounded-xl bg-slate-950 border border-white/10 focus:border-blue-500 focus:outline-none transition-all"
-                                value={newPassword}
-                                onChange={(e) => setNewPassword(e.target.value)}
-                                placeholder="Min 6 characters"
-                                required
-                            />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full max-w-6xl">
+                {/* Left Column */}
+                <div className="space-y-6">
+                    {/* Change Password Section */}
+                    <div className="bg-slate-900/50 backdrop-blur-xl p-8 rounded-2xl shadow-xl border border-white/10 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 p-4 opacity-30">
+                            <div className="w-20 h-20 bg-blue-500/20 rounded-full blur-2xl"></div>
                         </div>
-                        <div className="flex flex-col gap-2">
-                            <label className="text-sm text-slate-400">Confirm New Password</label>
-                            <input
-                                type="password"
-                                className="p-3 rounded-xl bg-slate-950 border border-white/10 focus:border-blue-500 focus:outline-none transition-all"
-                                value={confirmPassword}
-                                onChange={(e) => setConfirmPassword(e.target.value)}
-                                placeholder="Repeat new password"
-                                required
-                            />
+                        <h2 className="text-xl font-bold mb-4 text-blue-400 relative z-10">Security</h2>
+                        <p className="text-slate-300 mb-6 relative z-10">
+                            Update your account password.
+                        </p>
+                        <form onSubmit={handleUpdatePassword} className="space-y-4 relative z-10">
+                            <div className="flex flex-col gap-2">
+                                <label className="text-sm text-slate-400">New Password</label>
+                                <input
+                                    type="password"
+                                    className="p-3 rounded-xl bg-slate-950 border border-white/10 focus:border-blue-500 focus:outline-none transition-all"
+                                    value={newPassword}
+                                    onChange={(e) => setNewPassword(e.target.value)}
+                                    placeholder="Min 6 characters"
+                                    required
+                                />
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <label className="text-sm text-slate-400">Confirm New Password</label>
+                                <input
+                                    type="password"
+                                    className="p-3 rounded-xl bg-slate-950 border border-white/10 focus:border-blue-500 focus:outline-none transition-all"
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    placeholder="Repeat new password"
+                                    required
+                                />
+                            </div>
+                            <button
+                                type="submit"
+                                disabled={passwordLoading}
+                                className="w-full md:w-auto bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-lg disabled:opacity-50"
+                            >
+                                {passwordLoading ? "Updating..." : "Update Password"}
+                            </button>
+                        </form>
+                    </div>
+
+                    {/* Session Timeout Section */}
+                    <div className="bg-slate-900/50 backdrop-blur-xl p-8 rounded-2xl shadow-xl border border-white/10 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 p-4 opacity-30">
+                            <div className="w-20 h-20 bg-emerald-500/20 rounded-full blur-2xl"></div>
+                        </div>
+                        <h2 className="text-xl font-bold mb-4 text-emerald-400 relative z-10">Session Management</h2>
+                        <p className="text-slate-300 mb-6 relative z-10">
+                            Automatically log out after a period of inactivity. Set to 0 to disable (Max 15 minutes).
+                        </p>
+                        <form onSubmit={handleUpdateTimeout} className="space-y-4 relative z-10">
+                            <div className="flex flex-col gap-2">
+                                <label className="text-sm text-slate-400">Inactivity Timeout (Minutes, Max 15)</label>
+                                <input
+                                    type="number"
+                                    min="0"
+                                    max="15"
+                                    className="p-3 rounded-xl bg-slate-950 border border-white/10 focus:border-emerald-500 focus:outline-none transition-all"
+                                    value={sessionTimeout}
+                                    onChange={(e) => setSessionTimeout(e.target.value)}
+                                    placeholder="Default: 15 (Max 15)"
+                                    required
+                                />
+                            </div>
+                            <button
+                                type="submit"
+                                className="w-full md:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-lg"
+                            >
+                                Update Timeout
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                {/* Right Column */}
+                <div className="space-y-6">
+                    {/* Reset Progress Section */}
+                    <div className="bg-slate-900/50 backdrop-blur-xl p-8 rounded-2xl shadow-xl border border-white/10 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 p-4 opacity-30">
+                            <div className="w-20 h-20 bg-amber-500/20 rounded-full blur-2xl"></div>
                         </div>
                         <button
                             type="submit"
