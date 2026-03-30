@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import supabase from '../lib/supabase';
 import { analyzeOriginStory, type OriginStoryAnalysis } from '../lib/gemini';
-import { saveInitialStats, completeOnboarding } from '../lib/db';
+import { saveInitialStats, completeOnboarding, saveActivityLog } from '../lib/db';
 import HexagonChart from '../components/HexagonChart';
 import Notification from '../components/Notification';
 import type { NotificationType } from '../components/Notification';
@@ -70,6 +70,11 @@ export default function OriginStory() {
             // 1. Save stats
             await saveInitialStats(userId, result.initial_stats);
             console.log("Stats saved.");
+
+            console.log("Saving story to history...");
+            // Save prompt history
+            await saveActivityLog(userId, story, result);
+            console.log("History saved.");
 
             console.log("Completing onboarding...");
             // 2. Complete onboarding (metadata update + character class update)
