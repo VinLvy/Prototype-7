@@ -244,7 +244,7 @@ export default function Settings() {
                     </div>
 
                     {/* System Information / Decorative Card */}
-                    <div className="bg-slate-900/50 backdrop-blur-xl p-8 rounded-2xl shadow-xl border border-white/10 relative overflow-hidden flex flex-col items-center text-center">
+                    {/* <div className="bg-slate-900/50 backdrop-blur-xl p-8 rounded-2xl shadow-xl border border-white/10 relative overflow-hidden flex flex-col items-center text-center">
                         <div className="absolute top-0 right-0 p-4 opacity-30">
                             <div className="w-32 h-32 bg-purple-500/20 rounded-full blur-3xl"></div>
                         </div>
@@ -268,7 +268,7 @@ export default function Settings() {
                                 OPTIMAL
                             </span>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
             </div>
 
