@@ -268,7 +268,7 @@ export const saveInitialStats = async (userId: string, stats: { [key: string]: n
                 .insert({
                     id: userId,
                     username: user.user_metadata?.full_name || 'Adventurer',
-                    avatar_url: user.user_metadata?.avatar_url || null
+                    avatar_url: null
                 });
             if (insertError) {
                 console.error("Failed to create missing user record:", insertError);
