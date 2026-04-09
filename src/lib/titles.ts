@@ -7,7 +7,7 @@ export interface Title {
     description: string;
     requirement: (stats: UserStats) => boolean;
     uiRequirement: string;
-    icon: any;
+    icon: React.ElementType;
     color: string;
     textColor: string;
     borderColor: string;

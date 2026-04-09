@@ -17,7 +17,9 @@ export default function Settings() {
     const [passwordLoading, setPasswordLoading] = useState(false);
 
     // Session Timeout State
-    const [sessionTimeout, setSessionTimeout] = useState<string>('15');
+    const [sessionTimeout, setSessionTimeout] = useState<string>(() => {
+        return localStorage.getItem('session_timeout') || '15';
+    });
 
     // Notification state
     const [notification, setNotification] = useState<{
@@ -43,11 +45,6 @@ export default function Settings() {
     const [isResetModalOpen, setResetModalOpen] = useState(false);
 
     useEffect(() => {
-        const savedTimeout = localStorage.getItem('session_timeout');
-        if (savedTimeout) {
-            setSessionTimeout(savedTimeout);
-        }
-
         supabase.auth.getUser().then(({ data: { user } }) => {
             if (user) setUserId(user.id);
         });

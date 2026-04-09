@@ -8,7 +8,7 @@ export interface CharacterClass {
     requirement: (stats: UserStats) => boolean;
     uiRequirement: string;
     primaryStat: string;
-    icon: any;
+    icon: React.ElementType;
     color: string;
     borderColor: string;
     bgGradient: string;

@@ -35,6 +35,7 @@ const notifyUserDataChange = () => {
     });
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const saveActivityLog = async (userId: string, description: string, aiAnalysis: any) => {
     const { error } = await supabase
         .from('activity_logs')
@@ -122,12 +123,13 @@ export const updateUserStats = async (userId: string, statsIncrease: { [key: str
         'WEA': 'wealth'
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const newStats: any = {};
 
     for (const [key, increase] of Object.entries(statsIncrease)) {
         const column = mapKeyToColumn[key];
         if (column) {
-            // @ts-ignore
+            // @ts-expect-error accessing dynamic properties
             newStats[column] = Math.max(0, (currentStats[column] || 0) + (increase || 0));
         }
     }
@@ -215,7 +217,7 @@ export const allocateSkillPoint = async (userId: string, statKey: string) => {
     const currentStats = await getUserStats(userId);
     if (!currentStats) throw new Error("User stats not found");
 
-    // @ts-ignore
+    // @ts-expect-error accessing dynamic properties
     const newValue = (currentStats[column] || 0) + 1;
 
     const { error: statsError } = await supabase
@@ -286,6 +288,7 @@ export const saveInitialStats = async (userId: string, stats: { [key: string]: n
         'WEA': 'wealth'
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const newStats: any = {};
     for (const [key, value] of Object.entries(stats)) {
         const column = mapKeyToColumn[key];

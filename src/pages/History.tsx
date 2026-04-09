@@ -3,6 +3,7 @@ import supabase from '../lib/supabase';
 import { getActivityLogs } from '../lib/db';
 
 export default function History() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [logs, setLogs] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 

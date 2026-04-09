@@ -12,7 +12,8 @@ interface ImageCropperProps {
 const ImageCropper = ({ imageSrc, onCropComplete, onCancel }: ImageCropperProps) => {
     const [crop, setCrop] = useState({ x: 0, y: 0 });
     const [zoom, setZoom] = useState(1);
-    const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
+    type PixelCrop = { x: number; y: number; width: number; height: number };
+    const [croppedAreaPixels, setCroppedAreaPixels] = useState<PixelCrop | null>(null);
 
     const onCropChange = (crop: { x: number; y: number }) => {
         setCrop(crop);
@@ -22,11 +23,12 @@ const ImageCropper = ({ imageSrc, onCropComplete, onCancel }: ImageCropperProps)
         setZoom(zoom);
     };
 
-    const onCropCompleteHandler = useCallback((_croppedArea: any, croppedAreaPixels: any) => {
+    const onCropCompleteHandler = useCallback((_croppedArea: unknown, croppedAreaPixels: PixelCrop) => {
         setCroppedAreaPixels(croppedAreaPixels);
     }, []);
 
     const showCroppedImage = useCallback(async () => {
+        if (!croppedAreaPixels) return;
         try {
             const croppedImage = await getCroppedImg(imageSrc, croppedAreaPixels);
             if (croppedImage) {

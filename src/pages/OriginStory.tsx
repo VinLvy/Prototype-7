@@ -88,6 +88,7 @@ export default function OriginStory() {
             console.log("Redirecting to dashboard...");
             // 3. Redirect
             navigate('/dashboard', { replace: true });
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             console.error("Critical error saving profile:", error);
             // Show more specific error if possible

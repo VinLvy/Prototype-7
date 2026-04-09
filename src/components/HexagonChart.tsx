@@ -20,6 +20,7 @@ interface HexagonChartProps {
     onIncreaseStat?: (stat: string) => void;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const CustomTick = ({ payload, x, y, cx, cy, skillPoints, onIncreaseStat }: any) => {
     // Calculate vector from center to current point
     // We can use simple vector math: (x - cx, y - cy)
@@ -78,6 +79,7 @@ const CustomTick = ({ payload, x, y, cx, cy, skillPoints, onIncreaseStat }: any)
     );
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
         const data = payload[0].payload;

@@ -2,6 +2,7 @@
 // Simple synthesizer for sound effects using Web Audio API
 // No external files required!
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
 
 export const playLevelUpSound = () => {
