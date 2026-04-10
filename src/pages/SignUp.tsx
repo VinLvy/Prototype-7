@@ -105,6 +105,7 @@ export default function SignUp() {
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                         required
+                        autoComplete="username"
                     />
                     <input
                         className="p-3.5 rounded-xl bg-slate-950/50 border border-white/10 text-white focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 focus:outline-none transition-all"
@@ -113,6 +114,7 @@ export default function SignUp() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
+                        autoComplete="email"
                     />
                     <input
                         className="p-3.5 rounded-xl bg-slate-950/50 border border-white/10 text-white focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 focus:outline-none transition-all"
@@ -121,6 +123,7 @@ export default function SignUp() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
+                        autoComplete="new-password"
                     />
                     <button
                         className="bg-gradient-to-r from-blue-600 to-cyan-600 p-3.5 rounded-xl font-bold hover:shadow-lg hover:shadow-cyan-500/30 transition-all mt-2 active:scale-[0.98]"

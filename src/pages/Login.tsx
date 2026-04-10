@@ -102,6 +102,7 @@ export default function Login() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
+                        autoComplete="email"
                     />
                     <div className="flex flex-col items-end w-full">
                         <input
@@ -111,6 +112,7 @@ export default function Login() {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
+                            autoComplete="current-password"
                         />
                         <Link to="/forgot-password" className="text-sm text-purple-300 hover:text-purple-200 hover:underline mt-2">
                             Forgot Password?
