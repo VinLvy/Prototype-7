@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { LogOut } from 'lucide-react';
 import supabase from '../lib/supabase';
 import { analyzeOriginStory, type OriginStoryAnalysis } from '../lib/gemini';
 import { saveInitialStats, completeOnboarding, saveActivityLog } from '../lib/db';
@@ -39,15 +40,30 @@ export default function OriginStory() {
         });
     }, []);
 
+    const handleLogout = async () => {
+        await supabase.auth.signOut();
+        navigate('/login', { replace: true });
+    };
+
     const handleAnalyze = async () => {
         if (!story.trim()) return;
         setLoading(true);
         try {
             const analysis = await analyzeOriginStory(story);
             setResult(analysis);
-        } catch (error) {
+        } catch (error: any) {
             console.error("Analysis failed:", error);
-            showNotification("Failed to analyze story. Please try again.");
+            
+            // Check for potential API key restriction errors or CORS which manifest closely like this in browser environments
+            let errorMsg = "Failed to analyze story. Please try again.";
+            if (error?.message) {
+                if (error.message.includes('403') || error.message.includes('API key') || error.message.includes('fetch')) {
+                    errorMsg = "API Connection Error: If this is on Vercel, please ensure your Vercel domain is added to your Gemini API Key restrictions, or disable restrictions. Also verify VITE_GEMINI_API_KEY is deployed on Vercel.";
+                } else {
+                    errorMsg = `Analysis Error: ${error.message}`;
+                }
+            }
+            showNotification(errorMsg);
         } finally {
             setLoading(false);
         }
@@ -124,7 +140,18 @@ export default function OriginStory() {
                 <div className="absolute bottom-[-20%] right-[-20%] w-[150%] h-[150%] bg-blue-900/10 blur-[120px] rounded-full animate-pulse delay-1000"></div>
             </div>
 
-            <div className="z-10 w-full max-w-4xl">
+            {/* Logout / Back to Login Button */}
+            <div className="absolute top-6 left-6 md:top-8 md:left-8 z-50">
+                <button
+                    onClick={handleLogout}
+                    className="flex items-center gap-2 px-4 py-2 bg-slate-900/60 hover:bg-slate-800 border border-white/10 rounded-full text-slate-300 hover:text-white transition-all shadow-lg backdrop-blur-md group"
+                >
+                    <LogOut className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                    <span className="text-sm font-bold tracking-wide">Back to Login</span>
+                </button>
+            </div>
+
+            <div className="z-10 w-full max-w-4xl mt-16 md:mt-0">
                 {!result ? (
                     // INPUT STAGE
                     <div className="bg-slate-900/50 backdrop-blur-xl p-8 md:p-12 rounded-3xl border border-white/10 shadow-2xl transition-all duration-500">
