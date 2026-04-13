@@ -51,7 +51,8 @@ export default function OriginStory() {
         try {
             const analysis = await analyzeOriginStory(story);
             setResult(analysis);
-        } catch (error: any) {
+        } catch (err) {
+            const error = err as Error;
             console.error("Analysis failed:", error);
             
             // Check for potential API key restriction errors or CORS which manifest closely like this in browser environments

@@ -5,7 +5,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// @ts-ignore: Deno is available in Supabase Edge Functions runtime
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 declare const Deno: any;
 
 Deno.serve(async (req: Request) => {
