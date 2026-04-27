@@ -20,7 +20,16 @@ export const analyzeAction = async (userStory: string): Promise<AIAnalysisRespon
     });
 
     if (error) {
-      throw new Error(`Edge Function error: ${error.message}`);
+      let detail = error.message;
+      if (error.context && typeof error.context.json === 'function') {
+        try {
+          const errBody = await error.context.json();
+          if (errBody && errBody.error) detail += ` - ${errBody.error}`;
+        } catch (e) {
+          // ignore
+        }
+      }
+      throw new Error(`Edge Function error: ${detail}`);
     }
 
     if (!data) {
@@ -54,7 +63,16 @@ export const analyzeOriginStory = async (story: string): Promise<OriginStoryAnal
     });
 
     if (error) {
-      throw new Error(`Edge Function error: ${error.message}`);
+      let detail = error.message;
+      if (error.context && typeof error.context.json === 'function') {
+        try {
+          const errBody = await error.context.json();
+          if (errBody && errBody.error) detail += ` - ${errBody.error}`;
+        } catch (e) {
+          // ignore
+        }
+      }
+      throw new Error(`Edge Function error: ${detail}`);
     }
 
     if (!data) {
