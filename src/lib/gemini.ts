@@ -25,7 +25,7 @@ export const analyzeAction = async (userStory: string): Promise<AIAnalysisRespon
         try {
           const errBody = await error.context.json();
           if (errBody && errBody.error) detail += ` - ${errBody.error}`;
-        } catch (e) {
+        } catch {
           // ignore
         }
       }
@@ -68,7 +68,7 @@ export const analyzeOriginStory = async (story: string): Promise<OriginStoryAnal
         try {
           const errBody = await error.context.json();
           if (errBody && errBody.error) detail += ` - ${errBody.error}`;
-        } catch (e) {
+        } catch {
           // ignore
         }
       }
