@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { Eye, EyeOff } from 'lucide-react';
 import supabase from '../lib/supabase';
 import Notification from '../components/Notification';
 import type { NotificationType } from '../components/Notification';
@@ -8,6 +9,7 @@ export default function SignUp() {
     const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const [username, setUsername] = useState('');
     const navigate = useNavigate();
 
@@ -116,15 +118,24 @@ export default function SignUp() {
                         required
                         autoComplete="email"
                     />
-                    <input
-                        className="p-3.5 rounded-xl bg-slate-950/50 border border-white/10 text-white focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 focus:outline-none transition-all"
-                        type="password"
-                        placeholder="Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                        autoComplete="new-password"
-                    />
+                    <div className="relative w-full">
+                        <input
+                            className="p-3.5 rounded-xl bg-slate-950/50 border border-white/10 text-white focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 focus:outline-none transition-all w-full pr-12"
+                            type={showPassword ? "text" : "password"}
+                            placeholder="Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                            autoComplete="new-password"
+                        />
+                        <button
+                            type="button"
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors"
+                            onClick={() => setShowPassword(!showPassword)}
+                        >
+                            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                        </button>
+                    </div>
                     <button
                         className="bg-gradient-to-r from-blue-600 to-cyan-600 p-3.5 rounded-xl font-bold hover:shadow-lg hover:shadow-cyan-500/30 transition-all mt-2 active:scale-[0.98]"
                         disabled={loading}
