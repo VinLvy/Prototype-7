@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { Eye, EyeOff } from 'lucide-react';
 import supabase from '../lib/supabase';
 import Notification from '../components/Notification';
 import type { NotificationType } from '../components/Notification';
@@ -8,6 +9,7 @@ export default function Login() {
     const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
 
     // Notification state
@@ -105,15 +107,24 @@ export default function Login() {
                         autoComplete="email"
                     />
                     <div className="flex flex-col items-end w-full">
-                        <input
-                            className="p-3.5 rounded-xl bg-slate-950/50 border border-white/10 text-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none transition-all w-full"
-                            type="password"
-                            placeholder="Password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                            autoComplete="current-password"
-                        />
+                        <div className="relative w-full">
+                            <input
+                                className="p-3.5 rounded-xl bg-slate-950/50 border border-white/10 text-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none transition-all w-full pr-12"
+                                type={showPassword ? "text" : "password"}
+                                placeholder="Password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                                autoComplete="current-password"
+                            />
+                            <button
+                                type="button"
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors"
+                                onClick={() => setShowPassword(!showPassword)}
+                            >
+                                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                            </button>
+                        </div>
                         <Link to="/forgot-password" className="text-sm text-purple-300 hover:text-purple-200 hover:underline mt-2">
                             Forgot Password?
                         </Link>
