@@ -1,5 +1,6 @@
 import supabase from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
+import { Eye, EyeOff } from 'lucide-react';
 import { resetAccountProgress } from '../lib/db';
 import { useState, useEffect } from 'react';
 import Notification from '../components/Notification';
@@ -15,6 +16,8 @@ export default function Settings() {
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [passwordLoading, setPasswordLoading] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     // Session Timeout State
     const [sessionTimeout, setSessionTimeout] = useState<string>(() => {
@@ -140,25 +143,43 @@ export default function Settings() {
                         <form onSubmit={handleUpdatePassword} className="space-y-4 relative z-10">
                             <div className="flex flex-col gap-2">
                                 <label className="text-sm text-slate-400">New Password</label>
-                                <input
-                                    type="password"
-                                    className="p-3 rounded-xl bg-slate-950 border border-white/10 focus:border-blue-500 focus:outline-none transition-all"
-                                    value={newPassword}
-                                    onChange={(e) => setNewPassword(e.target.value)}
-                                    placeholder="Min 6 characters"
-                                    required
-                                />
+                                <div className="relative w-full">
+                                    <input
+                                        type={showNewPassword ? "text" : "password"}
+                                        className="p-3 rounded-xl bg-slate-950 border border-white/10 focus:border-blue-500 focus:outline-none transition-all w-full pr-12"
+                                        value={newPassword}
+                                        onChange={(e) => setNewPassword(e.target.value)}
+                                        placeholder="Min 6 characters"
+                                        required
+                                    />
+                                    <button
+                                        type="button"
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors"
+                                        onClick={() => setShowNewPassword(!showNewPassword)}
+                                    >
+                                        {showNewPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                    </button>
+                                </div>
                             </div>
                             <div className="flex flex-col gap-2">
                                 <label className="text-sm text-slate-400">Confirm New Password</label>
-                                <input
-                                    type="password"
-                                    className="p-3 rounded-xl bg-slate-950 border border-white/10 focus:border-blue-500 focus:outline-none transition-all"
-                                    value={confirmPassword}
-                                    onChange={(e) => setConfirmPassword(e.target.value)}
-                                    placeholder="Repeat new password"
-                                    required
-                                />
+                                <div className="relative w-full">
+                                    <input
+                                        type={showConfirmPassword ? "text" : "password"}
+                                        className="p-3 rounded-xl bg-slate-950 border border-white/10 focus:border-blue-500 focus:outline-none transition-all w-full pr-12"
+                                        value={confirmPassword}
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                        placeholder="Repeat new password"
+                                        required
+                                    />
+                                    <button
+                                        type="button"
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors"
+                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                    >
+                                        {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                    </button>
+                                </div>
                             </div>
                             <button
                                 type="submit"
