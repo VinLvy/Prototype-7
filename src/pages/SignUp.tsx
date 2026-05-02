@@ -137,7 +137,7 @@ export default function SignUp() {
                         </button>
                     </div>
                     <button
-                        className="bg-gradient-to-r from-blue-600 to-cyan-600 p-3.5 rounded-xl font-bold hover:shadow-lg hover:shadow-cyan-500/30 transition-all mt-2 active:scale-[0.98]"
+                        className="bg-gradient-to-r from-blue-600 to-cyan-600 p-3.5 rounded-xl font-bold hover:shadow-lg hover:shadow-cyan-500/40 hover:-translate-y-0.5 transition-all mt-2 active:scale-[0.98]"
                         disabled={loading}
                     >
                         {loading ? 'Creating Account...' : 'Sign Up'}
@@ -152,7 +152,7 @@ export default function SignUp() {
                     <button
                         type="button"
                         onClick={handleGoogleSignUp}
-                        className="flex items-center justify-center gap-3 bg-white text-slate-900 p-3.5 rounded-xl font-bold hover:bg-slate-100 transition-all active:scale-[0.98]"
+                        className="flex items-center justify-center gap-3 bg-white text-slate-900 p-3.5 rounded-xl font-bold hover:bg-slate-50 hover:shadow-lg hover:shadow-white/20 hover:-translate-y-0.5 transition-all active:scale-[0.98]"
                         disabled={loading}
                     >
                         <svg className="w-5 h-5" viewBox="0 0 24 24">
