@@ -1,33 +1,46 @@
 # ReLife RPG (Prototype-7)
 
-ReLife RPG is a gamified life-tracking application that transforms your daily activities and achievements into RPG statistics. By logging your daily progress, the integrated **Google Gemini AI** analyzes your entries and awards you experience points (XP) and stat increases across six core attributes: **Strength**, **Intelligence**, **Charisma**, **Creativity**, **Wisdom**, and **Wealth**.
+ReLife RPG is a gamified life-tracking application that transforms your daily activities, achievements, and past history into RPG statistics. By logging your daily progress, the integrated **Google Gemini AI** analyzes your entries and awards you experience points (XP) and stat increases across six core attributes: **Strength (STR)**, **Intelligence (INT)**, **Charisma (CHA)**, **Creativity (CRE)**, **Wisdom (WIS)**, and **Wealth (WEA)**.
 
 ![ReLife RPG Dashboard](./src/assets/dashboard.png)
 
-## 🚀 Features
+## 🚀 Key Features
 
-*   **AI-Powered Journaling**: Simply write about your day, and Gemini AI analyzes your actions to determine which stats improve.
-*   **Hexagon Stat System**: Visualize your personal growth with a dynamic Radar Chart showing your balance across 6 key attributes.
-*   **Leveling System**: Gain XP, level up, and earn **Skill Points** to manually allocate to your desired stats.
-*   **Gamified Progression**: Unlock unique **Titles** and **Character Classes** based on your stat distribution (e.g., reaching high Intelligence unlocks the "Sage" title).
-*   **Modern Cyberpunk UI**: A sleek, dark-mode interface featuring glassmorphism, smooth animations (Framer Motion), custom in-app notifications, and responsive design.
-*   **Profile Management (Origin Story)**: Customize your profile with a cropped avatar, username, and selectable titles.
-*   **Account Controls**: Manage your account with features like auto-logout on session timeout and an option to completely reset your account progress from settings.
-*   **Secure Authentication**: User management powered by Supabase.
+### 📖 The Origin Story
+Start your journey by telling the AI about your past life, struggles, and triumphs. The AI will analyze your story and generate your **Initial Stats** and recommend a starting **Character Class**.
+
+### 🤖 AI-Powered Daily Journaling
+Log your daily activities in the Dashboard Journal. The Gemini AI evaluates your actions (e.g., "Went to the gym" -> +STR, "Read a book" -> +INT) and dynamically updates your stats. Positive actions grant stat boosts and XP, while negative habits may penalize you!
+
+### 📊 Hexagon Stat Visualization
+Visualize your personal growth in real-time with an interactive Radar Chart showing your balance across the 6 key attributes.
+
+### ⚔️ Gamified Progression & Customization
+- **Leveling System**: Gain XP from daily actions to level up.
+- **Skill Points**: Earn skill points upon leveling up to manually upgrade stats of your choice.
+- **Titles & Classes**: Unlock and equip unique **Titles** (e.g., "Novice", "Scholar") and **Character Classes** based on your progression.
+- **Profile Customization**: Update your avatar with an integrated image cropper and personalize your username.
+
+### 🛡️ Security & Settings
+- **Secure Authentication**: Email/Password and Google OAuth powered by Supabase.
+- **Session Management**: Set auto-logout inactivity timeouts to protect your account.
+- **Account Controls**: Full control over your data with options to reset your RPG progress or permanently delete your account.
+- **Password Recovery**: Integrated Forgot/Reset password flows.
 
 ## 🛠️ Tech Stack
 
-### Frontend
-*   **Framework**: [React](https://react.dev/) (with [Vite](https://vitejs.dev/))
+### Frontend Architecture
+*   **Framework**: [React 19](https://react.dev/) with [Vite](https://vitejs.dev/)
 *   **Language**: [TypeScript](https://www.typescriptlang.org/)
-*   **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-*   **Animations**: [Framer Motion](https://www.framer.com/motion/)
-*   **Charts**: [Recharts](https://recharts.org/)
-*   **Icons**: [Lucide React](https://lucide.dev/)
+*   **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
+*   **Charts**: [Recharts](https://recharts.org/) for the Hexagon Stat system
+*   **Icons & Animations**: [Lucide React](https://lucide.dev/), [Framer Motion](https://www.framer.com/motion/), [React Confetti](https://www.npmjs.com/package/react-confetti)
+*   **Routing**: [React Router v7](https://reactrouter.com/)
 
 ### Backend & Infrastructure
 *   **Database & Auth**: [Supabase](https://supabase.com/) (PostgreSQL)
-*   **AI Model**: [Google Gemini API](https://ai.google.dev/) (`gemini-2.5-flash`)
+*   **Serverless Computing**: Supabase Edge Functions (Deno)
+*   **AI Engine**: [Google Gemini API](https://ai.google.dev/) (`gemini-2.5-flash`)
 
 ## 📦 Installation & Setup
 
@@ -49,6 +62,7 @@ ReLife RPG is a gamified life-tracking application that transforms your daily ac
     VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
     VITE_GEMINI_API_KEY=your_gemini_api_key
     ```
+    *(Note: For Supabase Edge Functions, ensure `GEMINI_API_KEY` is set in your Supabase project's secrets.)*
 
 4.  **Run the development server**
     ```bash
@@ -58,23 +72,32 @@ ReLife RPG is a gamified life-tracking application that transforms your daily ac
 ## 📂 Project Structure
 
 ```text
-src/
-├── components/       # Reusable UI components (HexagonChart, LevelUpCelebration, etc.)
-├── lib/              # Core logic and configuration
-│   ├── db.ts         # User stats and database operations
-│   ├── gemini.ts     # AI analysis and API interaction
-│   └── supabase.ts   # Supabase client setup
-├── pages/            # Main application views (Dashboard, Login, Signup)
-└── App.tsx           # Main application entry and routing
+prototype-7/
+├── src/
+│   ├── assets/       # Static assets and images
+│   ├── components/   # Reusable UI (Modals, Sidebar, HexagonChart, etc.)
+│   ├── lib/          # Core utilities
+│   │   ├── audio.ts  # Audio effects manager
+│   │   ├── db.ts     # Supabase DB operations and typings
+│   │   ├── gemini.ts # AI Edge Function caller
+│   │   └── supabase.ts # Supabase client initialization
+│   ├── pages/        # Application routes (Dashboard, OriginStory, Settings, etc.)
+│   ├── App.tsx       # Main layout and router provider
+│   └── index.css     # Global styles and Tailwind base
+├── supabase/
+│   └── functions/    # Edge functions
+│       └── gemini-ai/ # Deno function handling Gemini API logic
+└── package.json
 ```
 
-## 🎮 How It Works
+## 🎮 How It Works (User Flow)
 
-1.  **Log In**: creating an account via Supabase.
-2.  **Dashboard**: You are greeted with your current level, XP progress, and stat chart.
-3.  **Journal Entry**: Type what you did today (e.g., "Went to the gym for 2 hours and read a book about finance").
-4.  **AI Analysis**: The system sends your entry to Gemini, which determines that you gained **Strength** (Gym) and **Intelligence/Wealth** (Finance book).
-5.  **Growth**: Watch your stats rise, your level increase, and unlock new possibilities!
+1.  **Sign Up / Log In**: Create an account via email or Google.
+2.  **Origin Story**: If you are a new user, you must narrate your background. The AI analyzes this and initializes your base stats.
+3.  **Dashboard**: You arrive at your command center. Check your current Level, XP, and Stat Distribution.
+4.  **Daily Journal**: Enter your daily achievements. The Gemini AI evaluates them, granting XP and boosting specific stats.
+5.  **Level Up**: Gain enough XP to level up, triggering a celebration! Use your earned Skill Points to manually refine your build.
+6.  **Customize**: Open the Sidebar to equip new Classes, change Titles, or update your profile picture.
 
 ## 📜 License
 
