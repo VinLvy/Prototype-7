@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import HexagonChart from '../components/HexagonChart';
 import LevelUpCelebration from '../components/LevelUpCelebration';
-import { analyzeAction } from '../lib/gemini';
+import { analyzeAction, type AIAnalysisResponse } from '../lib/gemini';
 import { saveActivityLog, updateUserStats, getUserStats, updateUserXP, getUserProfile, allocateSkillPoint, type UserStats } from '../lib/db';
 import { playLevelUpSound } from '../lib/audio';
 import supabase from '../lib/supabase';
@@ -33,7 +33,7 @@ const formatStatsForChart = (stats: UserStats | null) => {
 export default function Dashboard() {
     const [data, setData] = useState(formatStatsForChart(null));
     const [prompt, setPrompt] = useState('');
-    const [geminiResponse, setGeminiResponse] = useState<string | null>(null);
+    const [analysisResult, setAnalysisResult] = useState<AIAnalysisResponse | null>(null);
     const [loading, setLoading] = useState(false);
     const [userId, setUserId] = useState<string | null>(null);
 
@@ -96,11 +96,11 @@ export default function Dashboard() {
         }
 
         setLoading(true);
-        setGeminiResponse(null);
+        setAnalysisResult(null);
         try {
             // 1. Analyze with AI
             const result = await analyzeAction(prompt);
-            setGeminiResponse(JSON.stringify(result, null, 2));
+            setAnalysisResult(result);
 
             // 2. Save Log to DB
             await saveActivityLog(userId, prompt, result);
@@ -132,7 +132,7 @@ export default function Dashboard() {
 
         } catch (error) {
             console.error(error);
-            setGeminiResponse("Error calling Gemini or parsing response.");
+            showNotification("Error calling AI or parsing response.");
         } finally {
             setLoading(false);
         }
@@ -209,20 +209,51 @@ export default function Dashboard() {
                         onChange={(e) => setPrompt(e.target.value)}
                     />
                     <button
-                        className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white px-8 py-3 rounded-xl font-bold transition-all w-full shadow-lg shadow-purple-900/20 active:scale-[0.98]"
+                        className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white px-8 py-3 rounded-xl font-bold transition-all w-full shadow-lg shadow-purple-900/20 active:scale-[0.98] hover:-translate-y-0.5 hover:shadow-purple-500/40"
                         onClick={handleGenerate}
                         disabled={loading}
                     >
                         {loading ? 'Analyzing...' : 'Submit to AI'}
                     </button>
 
-                    {geminiResponse && (
-                        <div className="mt-6 p-6 bg-slate-950/60 rounded-xl border border-white/10 shadow-inner">
-                            <h3 className="font-bold mb-3 text-purple-300 flex items-center gap-2">
-                                <span className="inline-block w-2 h-2 rounded-full bg-purple-400 animate-pulse" />
-                                AI Analysis:
+                    {analysisResult && (
+                        <div className="mt-6 p-6 bg-slate-900/60 rounded-2xl border border-purple-500/30 shadow-[0_0_15px_rgba(168,85,247,0.15)] animate-fade-in-up">
+                            <h3 className="font-bold mb-4 text-purple-300 flex items-center gap-2 text-lg border-b border-purple-500/20 pb-2">
+                                <span className="inline-block w-2.5 h-2.5 rounded-full bg-purple-400 animate-pulse shadow-[0_0_8px_rgba(168,85,247,0.8)]" />
+                                The Verdict
                             </h3>
-                            <pre className="text-sm whitespace-pre-wrap overflow-auto">{geminiResponse}</pre>
+                            
+                            <p className="text-slate-200 italic mb-6 leading-relaxed bg-slate-950/40 p-4 rounded-xl border border-white/5">
+                                "{analysisResult.summary}"
+                            </p>
+                            
+                            <div className="flex flex-col sm:flex-row justify-between gap-4">
+                                <div className="bg-slate-950/50 p-4 rounded-xl border border-white/5 flex-1">
+                                    <h4 className="text-xs text-slate-400 uppercase tracking-wider font-bold mb-3">Stat Changes</h4>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        {Object.entries(analysisResult.stats_increase).map(([stat, value]) => (
+                                            value !== 0 && (
+                                                <div key={stat} className="flex justify-between items-center text-sm">
+                                                    <span className="font-medium text-slate-300">{stat}</span>
+                                                    <span className={`font-bold ${value > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                                                        {value > 0 ? '+' : ''}{value}
+                                                    </span>
+                                                </div>
+                                            )
+                                        ))}
+                                    </div>
+                                    {Object.values(analysisResult.stats_increase).every(v => v === 0) && (
+                                        <p className="text-sm text-slate-500 italic">No stats changed.</p>
+                                    )}
+                                </div>
+                                
+                                <div className="bg-slate-950/50 p-4 rounded-xl border border-white/5 flex-1 flex flex-col justify-center items-center text-center">
+                                    <h4 className="text-xs text-slate-400 uppercase tracking-wider font-bold mb-2">Experience Gained</h4>
+                                    <div className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-500 drop-shadow-md">
+                                        +{analysisResult.xp_gained} XP
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     )}
                 </div>
