@@ -218,7 +218,7 @@ export default function OriginStory() {
                             <button
                                 onClick={handleConfirm}
                                 disabled={loading}
-                                className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white px-8 py-4 rounded-xl font-bold text-lg transition-all shadow-lg shadow-emerald-900/20 active:scale-[0.98]"
+                                className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white px-8 py-4 rounded-xl font-bold text-lg transition-all shadow-lg shadow-emerald-900/20 hover:shadow-emerald-500/40 hover:-translate-y-0.5 active:scale-[0.98]"
                             >
                                 {loading ? "Saving Profile..." : "Begin My Journey"}
                             </button>
